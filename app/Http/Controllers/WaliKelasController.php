@@ -9,19 +9,19 @@ use Illuminate\Http\Request;
 
 
 class WaliKelasController extends Controller
-{     
+{
     public function __construct()
-    {                
+    {
         $this->middleware('auth');
         $this->middleware('role:waliKelas');
     }
-        
+
     public function getPendaftarKelas(Request $request)
-    {               
+    {
         $this->validate($request, [
-            'beasiswa_id' => 'required|integer',            
+            'beasiswa_id' => 'required|integer',
         ]);
-        try{
+        try {
             $user = Auth::User();
             $waliKelasId = $user->waliKelas->id;
             $pendaftarBeasiswa = Mahasiswa::with(['beasiswa' => function ($query) use ($request) {
@@ -29,7 +29,7 @@ class WaliKelasController extends Controller
             }, 'orangTuaMahasiswa', 'saudaraMahasiswa'])->get();
             $pendaftarKelas = array();
             foreach ($pendaftarBeasiswa as $key => $value) {
-                if(count($value->beasiswa) != 0 && $value->wali_kelas_id == $waliKelasId){
+                if (count($value->beasiswa) != 0 && $value->wali_kelas_id == $waliKelasId) {
                     $beasiswa = $value->beasiswa;
                     unset($value->beasiswa);
                     $value->beasiswa = $beasiswa[0];
@@ -37,51 +37,51 @@ class WaliKelasController extends Controller
                 }
             }
             return $this->apiResponse(200, 'success', ['pendaftar_kelas' => $pendaftarKelas]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
-        }                
+        }
     }
 
     public function updateNilaiKelayakan(Request $request)
-    {               
+    {
         $this->validate($request, [
             'beasiswa_id' => 'required|integer',
-            'nim' => 'required|integer',            
+            'nim' => 'required|integer',
             'skor_prestasi' => 'required|integer|gte:0',
             'skor_perilaku' => 'required|integer|gte:0|lte:4',
-            'skor_organisasi' => 'required|integer|gte:0',            
+            'skor_organisasi' => 'required|integer|gte:0',
         ]);
-        try{
+        try {
             $user = Auth::User();
             $waliKelasId = $user->waliKelas->id;
             $mahasiswa = Mahasiswa::where('nim', $request->nim)->firstOrFail();
             $beasiswa = Beasiswa::findOrFail('beasiswa_id');
-            if($mahasiswa->wali_kelas_id == $waliKelasId){
+            if ($mahasiswa->wali_kelas_id == $waliKelasId) {
                 $pendaftaranMahasiswa = $mahasiswa->beasiswa()->wherePivot('beasiswa_id', $request->beasiswa_id)->where('status', 'Mendaftar')->firstOrFail();
                 $pendaftaranMahasiswa->pivot->skor_prestasi = $request->skor_prestasi;
                 $pendaftaranMahasiswa->pivot->skor_perilaku = $request->skor_perilaku;
                 $pendaftaranMahasiswa->pivot->skor_organisasi = $request->skor_organisasi;
-                $pendaftaranMahasiswa->pivot->skor_akhir = $pendaftaranMahasiswa->pivot->skor_ipk * $beasiswa->bobot_ipk/100 + 
-                                                            $pendaftaranMahasiswa->pivot->skor_prestasi * $beasiswa->bobot_prestasi/100 + 
-                                                            $pendaftaranMahasiswa->pivot->skor_perilaku * $beasiswa->bobot_perilaku/100 + 
-                                                            $pendaftaranMahasiswa->pivot->skor_organisasi * $beasiswa->bobot_organisasi/100 + 
-                                                            $pendaftaranMahasiswa->pivot->skor_kemampuan_ekonomi * $beasiswa->bobot_kemampuan_ekonomi/100;
+                $pendaftaranMahasiswa->pivot->skor_akhir = $pendaftaranMahasiswa->pivot->skor_ipk * $beasiswa->bobot_ipk / 100 +
+                    $pendaftaranMahasiswa->pivot->skor_prestasi * $beasiswa->bobot_prestasi / 100 +
+                    $pendaftaranMahasiswa->pivot->skor_perilaku * $beasiswa->bobot_perilaku / 100 +
+                    $pendaftaranMahasiswa->pivot->skor_organisasi * $beasiswa->bobot_organisasi / 100 +
+                    $pendaftaranMahasiswa->pivot->skor_kemampuan_ekonomi * $beasiswa->bobot_kemampuan_ekonomi / 100;
                 $pendaftaranMahasiswa->pivot->status = "Dinilai oleh wali kelas";
                 $pendaftaranMahasiswa->pivot->save();
                 return $this->apiResponse(200, 'success', ['hasil_penilaian' => $pendaftaranMahasiswa->pivot]);
             }
             return $this->apiResponse(201, 'Bukan mahasiswa yang diampu wali kelas', null);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
-        }                
+        }
     }
 
     public function getSertifikatMahasiswa(Request $request)
-    {               
+    {
         $this->validate($request, [
             'nim' => 'required',
         ]);
-        try{
+        try {
             $user = Auth::User();
             $waliKelasId = $user->waliKelas->id;
             $mahasiswa = Mahasiswa::where('nim', $request->nim)->where('wali_kelas_id', $waliKelasId)->firstOrFail();
@@ -90,8 +90,8 @@ class WaliKelasController extends Controller
                 'list_sertifikat_organisasi' => $mahasiswa->sertifikatOrganisasi,
             );
             return $this->apiResponse(200, 'success', ['sertifikat' => $sertifikat]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
-        }                
+        }
     }
 }

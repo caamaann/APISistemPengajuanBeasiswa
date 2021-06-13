@@ -8,12 +8,14 @@ class KetuaProgramStudi extends Model
 {
     protected $table = 'ketua_program_studi';
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo('App\User');
     }
-    
-    public function programStudi(){
-    	return $this->belongsTo('App\ProgramStudi');
+
+    public function programStudi()
+    {
+        return $this->belongsTo('App\ProgramStudi');
     }
 
 }

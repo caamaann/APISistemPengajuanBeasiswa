@@ -8,7 +8,8 @@ class Role extends Model
 {
     protected $table = 'roles';
 
-    public function users() {
+    public function users()
+    {
         return $this->belongsToMany('App\User', 'role_user', 'role_id', 'user_id')->withTimestamps();
     }
 }

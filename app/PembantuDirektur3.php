@@ -8,7 +8,8 @@ class PembantuDirektur3 extends Model
 {
     protected $table = 'pembantu_direktur_3';
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo('App\User');
     }
 }

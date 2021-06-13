@@ -11,8 +11,8 @@ class RoleMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next, ...$roles)
@@ -21,14 +21,14 @@ class RoleMiddleware
         $userRoles = $user->roles;
         foreach ($roles as $key => $role) {
             foreach ($userRoles as $key => $userRole) {
-                if($userRole->name == $role){
+                if ($userRole->name == $role) {
                     return $next($request);
                 }
             }
-        }                
+        }
         return response()->json([
             'status' => 201,
             'message' => 'Unauthorized',
-        ]);        
+        ]);
     }
 }

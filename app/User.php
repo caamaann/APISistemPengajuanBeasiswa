@@ -9,7 +9,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject 
+class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
     use Authenticatable, Authorizable;
 
@@ -54,27 +54,33 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return [];
     }
 
-    public function roles() {
+    public function roles()
+    {
         return $this->belongsToMany('App\Role', 'role_user', 'user_id', 'role_id')->withTimestamps();
     }
 
-    public function mahasiswa(){
+    public function mahasiswa()
+    {
         return $this->hasOne('App\Mahasiswa');
     }
 
-    public function waliKelas(){
+    public function waliKelas()
+    {
         return $this->hasOne('App\WaliKelas');
     }
 
-    public function ketuaProgramStudi(){
+    public function ketuaProgramStudi()
+    {
         return $this->hasOne('App\KetuaProgramStudi');
     }
 
-    public function ketuaJurusan(){
+    public function ketuaJurusan()
+    {
         return $this->hasOne('App\KetuaJurusan');
     }
 
-    public function pembantuDirektur3(){
+    public function pembantuDirektur3()
+    {
         return $this->hasOne('App\PembantuDirektur3');
     }
 }

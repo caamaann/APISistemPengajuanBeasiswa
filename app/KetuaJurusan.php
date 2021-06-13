@@ -8,12 +8,14 @@ class KetuaJurusan extends Model
 {
     protected $table = 'ketua_jurusan';
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo('App\User');
     }
-    
-    public function jurusan(){
-    	return $this->belongsTo('App\Jurusan');
+
+    public function jurusan()
+    {
+        return $this->belongsTo('App\Jurusan');
     }
 
 }

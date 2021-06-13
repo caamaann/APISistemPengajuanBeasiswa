@@ -11,8 +11,9 @@ use DB;
 
 
 class TesController extends Controller
-{     
-    public function index(){
+{
+    public function index()
+    {
         return DB::table('pendaftar_beasiswa')->get();
     }
 }

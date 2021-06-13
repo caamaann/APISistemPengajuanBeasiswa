@@ -8,36 +8,39 @@ use Illuminate\Http\Request;
 
 class ProgramStudiController extends Controller
 {
-     public function get(Request $request){
+    public function get(Request $request)
+    {
         $this->validate($request, [
             'program_studi_id' => 'required|integer',
         ]);
-        try{                        
+        try {
             $programStudi = ProgramStudi::findOrFail($request->program_studi_id);
             return $this->apiResponse(200, 'success', ['program_studi' => $programStudi]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
-     }
+    }
 
-     public function getAll(){
-        try{                        
+    public function getAll()
+    {
+        try {
             $listProgramStudi = ProgramStudi::all();
             return $this->apiResponse(200, 'success', ['program_studi' => $listProgramStudi]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
-     }
+    }
 
-     public function getProgramStudiByJurusan(Request $request){
+    public function getProgramStudiByJurusan(Request $request)
+    {
         $this->validate($request, [
             'jurusan_id' => 'required|integer',
         ]);
-        try{                        
-            $listProgramStudi = ProgramStudi::where('jurusan_id',$request->jurusan_id)->get();
+        try {
+            $listProgramStudi = ProgramStudi::where('jurusan_id', $request->jurusan_id)->get();
             return $this->apiResponse(200, 'success', ['program_studi' => $listProgramStudi]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
-     }
+    }
 }
