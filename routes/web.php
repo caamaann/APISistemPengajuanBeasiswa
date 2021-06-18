@@ -59,7 +59,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 			$router->post('/destroy', 'AdminController@destroyPembantuDirektur3');
 			$router->get('/all', 'AdminController@getAllPembantuDirektur3');
 			$router->get('/', 'AdminController@getPembantuDirektur3');
-		});		
+		});
 	});
 
 	$router->group(['prefix' => 'user'], function () use ($router) {
@@ -90,7 +90,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 				$router->post('/destroy', 'MahasiswaController@destroySertifikatOrganisasiMahasiswa');
 			});
 
-		});		
+		});
 
 		$router->group(['prefix' => 'orangtua'], function () use ($router) {
 			$router->post('/store', 'MahasiswaController@storeOrangTua');
@@ -154,22 +154,23 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 		});
 	});
 
-	$router->group(['prefix' => 'beasiswa'], function () use ($router) {		
+	$router->group(['prefix' => 'beasiswa'], function () use ($router) {
 		$router->get('/all', 'BeasiswaController@getAll');
 		$router->get('/active', 'BeasiswaController@getActive');
-		$router->get('/', 'BeasiswaController@get');		
+		$router->get('/', 'BeasiswaController@get');
 	});
 
 	$router->group(['prefix' => 'program_studi'], function () use ($router) {
 		$router->get('/', 'ProgramStudiController@get');
-		$router->get('/all', 'ProgramStudiController@getAll');
-		$router->get('/jurusan', 'ProgramStudiController@getProgramStudiByJurusan');
-
+        $router->post('/', 'ProgramStudiController@storeProgramStudi');
+        $router->put('/', 'ProgramStudiController@updateProgramStudi');
+        $router->delete('/', 'ProgramStudiController@destroyProgramStudi');
 	});
 
 	$router->group(['prefix' => 'jurusan'], function () use ($router) {
-		$router->get('/', 'JurusanController@get');
-		$router->get('/all', 'JurusanController@getAll');		
-
-	});	
+        $router->get('/', 'JurusanController@get');
+        $router->post('/', 'JurusanController@storeJurusan');
+        $router->put('/', 'JurusanController@updateJurusan');
+        $router->delete('/', 'JurusanController@destroyJurusan');
+	});
 });

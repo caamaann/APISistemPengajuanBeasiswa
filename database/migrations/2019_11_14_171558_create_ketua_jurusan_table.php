@@ -14,11 +14,11 @@ class CreateKetuaJurusanTable extends Migration
     public function up()
     {
         Schema::create('ketua_jurusan', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('jurusan_id')->unique();
+            $table->string('id');
+            $table->string('user_id');
+            $table->string('jurusan_id')->unique();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('jurusan_id')->references('id')->on('jurusan');            
+            $table->foreign('jurusan_id')->references('id')->on('jurusan');
             $table->string('nip', 20)->unique();
             $table->string('nama', 50);
             $table->timestamps();

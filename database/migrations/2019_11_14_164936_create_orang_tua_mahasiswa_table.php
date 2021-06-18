@@ -14,8 +14,8 @@ class CreateOrangTuaMahasiswaTable extends Migration
     public function up()
     {
         Schema::create('orang_tua_mahasiswa', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('mahasiswa_id');
+            $table->string('id');
+            $table->string('mahasiswa_id');
             $table->foreign('mahasiswa_id')->references('id')->on('mahasiswa');
             $table->string('nama_ayah', 50);
             $table->string('tempat_lahir_ayah', 30);

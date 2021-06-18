@@ -14,7 +14,7 @@ class AddWaliKelasIdToMahasiswaTable extends Migration
     public function up()
     {
         Schema::table('mahasiswa', function (Blueprint $table) {
-            $table->unsignedBigInteger('wali_kelas_id')->after('user_id');
+            $table->string('wali_kelas_id')->after('user_id');
             $table->foreign('wali_kelas_id')->references('id')->on('wali_kelas');
         });
     }

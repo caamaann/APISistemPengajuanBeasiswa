@@ -13,9 +13,9 @@ class CreatePendaftarBeasiswaTable extends Migration
      */
     public function up()
     {
-        Schema::create('pendaftar_beasiswa', function (Blueprint $table) {            
-            $table->unsignedBigInteger('mahasiswa_id');
-            $table->unsignedBigInteger('beasiswa_id');
+        Schema::create('pendaftar_beasiswa', function (Blueprint $table) {
+            $table->string('mahasiswa_id');
+            $table->string('beasiswa_id');
             $table->foreign('mahasiswa_id')->references('id')->on('mahasiswa');
             $table->foreign('beasiswa_id')->references('id')->on('beasiswa');
             $table->integer('skor_ipk')->default(0);

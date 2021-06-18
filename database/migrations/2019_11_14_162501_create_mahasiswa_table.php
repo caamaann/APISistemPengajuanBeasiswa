@@ -14,11 +14,11 @@ class CreateMahasiswaTable extends Migration
     public function up()
     {
         Schema::create('mahasiswa', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('program_studi_id');            
+            $table->string('id');
+            $table->string('user_id');
+            $table->string('program_studi_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('program_studi_id')->references('id')->on('program_studi');                        
+            $table->foreign('program_studi_id')->references('id')->on('program_studi');
             $table->string('nim', 10)->unique();
             $table->string('nama', 50);
             $table->string('tempat_lahir', 30)->nullable();
@@ -37,12 +37,12 @@ class CreateMahasiswaTable extends Migration
             $table->enum('status_keaktifan', ['Aktif', 'Tidak Aktif'])->default('Aktif');
             $table->string('file_transkrip_nilai')->nullable();
             $table->string('file_kk')->nullable();
-            $table->string('file_ktm')->nullable();            
+            $table->string('file_ktm')->nullable();
             $table->string('sertifikat_ppkk')->nullable();
             $table->string('sertifikat_bn')->nullable();
             $table->string('sertifikat_metagama')->nullable();
             $table->string('sertifikat_butterfly')->nullable();
-            $table->string('sertifikat_esq')->nullable();            
+            $table->string('sertifikat_esq')->nullable();
             $table->timestamps();
         });
     }

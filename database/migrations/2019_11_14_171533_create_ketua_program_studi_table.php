@@ -14,13 +14,13 @@ class CreateKetuaProgramStudiTable extends Migration
     public function up()
     {
         Schema::create('ketua_program_studi', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('program_studi_id')->unique();
+            $table->string('id');
+            $table->string('user_id');
+            $table->string('program_studi_id')->unique();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('program_studi_id')->references('id')->on('program_studi');
             $table->string('nip', 20)->unique();
-            $table->string('nama', 50);            
+            $table->string('nama', 50);
             $table->timestamps();
         });
     }

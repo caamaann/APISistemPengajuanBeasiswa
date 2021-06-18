@@ -14,8 +14,8 @@ class CreatePembantuDirektur3Table extends Migration
     public function up()
     {
         Schema::create('pembantu_direktur_3', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('id');
+            $table->string('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('nip', 20)->unique();
             $table->string('nama', 40);

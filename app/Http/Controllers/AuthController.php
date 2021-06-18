@@ -60,13 +60,10 @@ class AuthController extends Controller
             $user = User::where('username', $request->username)->firstOrFail();
             $user->profile = $this->getUserProfile($user);
             $user->roles = $this->getUserRole($user);
-            $credential = array(
-                'token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => Auth::factory()->getTTL() . ' minutes',
-                'user_data' => $user,
-            );
-            return $this->apiResponse(200, 'Authentication success', ['credential' => $credential]);
+            $user->token = 'Bearer ' . $token;
+            $credential = array($user);
+
+            return $this->apiResponse(200, 'Authentication success', $credential);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }

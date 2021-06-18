@@ -14,9 +14,9 @@ class CreateWaliKelasTable extends Migration
     public function up()
     {
         Schema::create('wali_kelas', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('jurusan_id');
+            $table->string('id');
+            $table->string('user_id');
+            $table->string('jurusan_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('jurusan_id')->references('id')->on('jurusan');
             $table->string('nip', 20)->unique();

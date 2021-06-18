@@ -14,8 +14,8 @@ class CreateJurusanTable extends Migration
     public function up()
     {
         Schema::create('jurusan', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('nama', 50);
+            $table->string('id');
+            $table->string('name', 50);
             $table->timestamps();
         });
     }

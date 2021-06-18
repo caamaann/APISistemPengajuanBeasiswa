@@ -14,10 +14,10 @@ class CreateProgramStudiTable extends Migration
     public function up()
     {
         Schema::create('program_studi', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->string('id');
             $table->unsignedBigInteger('jurusan_id');
             $table->foreign('jurusan_id')->references('id')->on('program_studi');
-            $table->string('nama', 50);
+            $table->string('name', 50);
             $table->timestamps();
         });
     }

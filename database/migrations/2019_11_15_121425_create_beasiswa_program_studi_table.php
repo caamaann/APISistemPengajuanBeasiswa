@@ -14,8 +14,8 @@ class CreateBeasiswaProgramStudiTable extends Migration
     public function up()
     {
         Schema::create('beasiswa_program_studi', function (Blueprint $table) {
-            $table->unsignedBigInteger('beasiswa_id');
-            $table->unsignedBigInteger('program_studi_id');
+            $table->string('beasiswa_id');
+            $table->string('program_studi_id');
             $table->foreign('beasiswa_id')->references('id')->on('beasiswa');
             $table->foreign('program_studi_id')->references('id')->on('program_studi');
             $table->integer('angkatan');

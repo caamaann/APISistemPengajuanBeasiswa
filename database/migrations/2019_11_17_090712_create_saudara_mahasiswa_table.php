@@ -14,8 +14,8 @@ class CreateSaudaraMahasiswaTable extends Migration
     public function up()
     {
         Schema::create('saudara_mahasiswa', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('mahasiswa_id');
+            $table->string('id');
+            $table->string('mahasiswa_id');
             $table->foreign('mahasiswa_id')->references('id')->on('mahasiswa');
             $table->string('nama', 50);
             $table->unsignedInteger('usia');

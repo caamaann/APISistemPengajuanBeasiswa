@@ -14,8 +14,8 @@ class CreateSertifikatOrganisasiTable extends Migration
     public function up()
     {
         Schema::create('sertifikat_organisasi', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('mahasiswa_id');
+            $table->string('id');
+            $table->string('mahasiswa_id');
             $table->foreign('mahasiswa_id')->references('id')->on('mahasiswa');
             $table->string('file_sertifikat');
             $table->enum('jenis',['Pengurus Organisasi', 'Kepanitiaan Program Kerja Kemahasiswaan']);
