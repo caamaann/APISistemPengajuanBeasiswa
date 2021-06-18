@@ -39,7 +39,7 @@ class Authenticate
             return response()->json([
                 'status' => 201,
                 'message' => 'Unauthenticated',
-            ]);
+            ],500);
         }
         return $next($request);
     }

@@ -9,6 +9,21 @@ use App\User;
 
 class Controller extends BaseController
 {
+	public function apiResponseGet($status, $records_total = 0, $data = null)
+    {
+        if ($data) {
+            return response()->json([
+                'status' => $status,
+                'recordsTotal' => $records_total,
+                'data' => $data
+            ]);
+        }
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+        ], 500);
+    }
+	
     public function apiResponse($status, $message, $result = null)
     {
         if ($result) {
@@ -21,13 +36,13 @@ class Controller extends BaseController
         return response()->json([
             'status' => $status,
             'message' => $message,
-        ]);
+        ], 500);
     }
 
     public function getUserProfile($user)
     {
         try {
-            $userProfile = "User ini belum mengisi profil";
+            $userProfile = array("nama"=>"Administrator");
             if ($user->mahasiswa()->exists()) {
                 $userProfile = $user->mahasiswa;
                 unset($user->mahasiswa);
@@ -53,18 +68,11 @@ class Controller extends BaseController
     public function getUserRole($user)
     {
         try {
-            $userRoles = "User ini belum memiliki role";
+            //$userRoles = "User ini belum memiliki role";
             if ($user->roles()->exists()) {
                 $roles = $user->roles;
-                $userRoles = [];
-                foreach ($roles as $key => $role) {
-                    unset($role->pivot);
-                    unset($role->created_at);
-                    unset($role->updated_at);
-                    array_push($userRoles, $role);
-                }
+                $userRoles = $roles[0];
             }
-            unset($user->roles);
             return $userRoles;
         } catch (Exception $e) {
             return $e->getMessage();

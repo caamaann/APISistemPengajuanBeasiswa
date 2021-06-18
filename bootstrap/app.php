@@ -67,6 +67,12 @@ $app->routeMiddleware([
     'guest' => App\Http\Middleware\RedirectIfAuthenticated::class,
 ]);
 
+$app->middleware([
+    Fruitcake\Cors\HandleCors::class,
+]);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
+$app->configure('cors');
+
 /*
 |--------------------------------------------------------------------------
 | Register Service Providers
@@ -84,7 +90,6 @@ $app->register(App\Providers\AuthServiceProvider::class);
 
 // Add this line
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
-
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

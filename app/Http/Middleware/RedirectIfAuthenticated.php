@@ -21,7 +21,7 @@ class RedirectIfAuthenticated
             return response()->json([
                 'status' => 201,
                 'message' => 'This token is authenticated',
-            ]);
+            ],500);
         }
         return $next($request);
     }

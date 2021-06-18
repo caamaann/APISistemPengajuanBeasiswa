@@ -19,9 +19,13 @@ $router->get('/tes', 'TesController@index');
 
 $router->group(['prefix' => 'api'], function () use ($router) {
 	// $router->post('register', 'AuthController@register');
-	$router->post('login', 'AuthController@login');
-	$router->post('logout', 'AuthController@logout');
+	//$router->post('login', 'AuthController@login');
+	//$router->post('logout', 'AuthController@logout');
 
+	$router->group(['prefix' => 'auth'], function () use ($router) {
+		$router->post('login', 'AuthController@login');
+	});
+	
 	$router->group(['prefix' => 'admin'], function () use ($router) {
 		$router->get('user/', 'AdminController@getUser');
 		$router->get('user/all', 'AdminController@getAllUser');

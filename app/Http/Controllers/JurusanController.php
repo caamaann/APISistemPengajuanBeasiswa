@@ -16,17 +16,33 @@ class JurusanController extends Controller
 
     public function get(Request $request)
     {
+		if (!$request->length){
+			$length = 10;
+		} else {
+			$length = $request->length;		
+		}
+		if (!$request->page){
+			$page = 1;
+		} else {
+			$page = $request->page;		
+		}
+		if (!$request->search_text){
+			$search_text = "";
+		} else {
+			$search_text = $request->search_text;		
+		}
+
         try {
             if ($request->id) {
                 $jurusan = array(Jurusan::findOrFail($request->id));
                 $jurusan[0]->program_studi = ProgramStudi::where('jurusan_id', $request->id)->get();
             } else {
-                $jurusan = Jurusan::all();
+                $jurusan = Jurusan::where('nama', 'like', '%'.$search_text.'%')->skip(($page-1)*$length)->take($length)->get();
                 foreach ($jurusan as $value){
                     $value->program_studi = ProgramStudi::where('jurusan_id', $value->id)->get();
                 }
             }
-            return $this->apiResponse(200, 'success', $jurusan);
+            return $this->apiResponseGet(200, Jurusan::count(), $jurusan);
         } catch (\Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
@@ -77,7 +93,7 @@ class JurusanController extends Controller
         try {
             $jurusan = Jurusan::findOrFail($request->id);
             $jurusan->delete();
-            return $this->apiResponse(200, 'Jurusan berhasil dihapus', null);
+            return $this->apiResponse(200, 'Jurusan berhasil dihapus', $jurusan);
         } catch (\Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }

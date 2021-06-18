@@ -29,6 +29,6 @@ class RoleMiddleware
         return response()->json([
             'status' => 201,
             'message' => 'Unauthorized',
-        ]);
+        ],500);
     }
 }

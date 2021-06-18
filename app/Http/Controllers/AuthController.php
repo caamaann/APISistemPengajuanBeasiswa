@@ -47,7 +47,7 @@ class AuthController extends Controller
         $credentials = $request->only(['username', 'password']);
         try {
             if (!$token = Auth::attempt($credentials)) {
-                return $this->apiResponse(201, 'Wrong credentials', null);
+                return $this->apiResponse(500, 'Login gagal, periksa password Anda', null);
             }
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
             return $this->apiResponse(500, 'Token Expired', null);
@@ -59,11 +59,13 @@ class AuthController extends Controller
         try {
             $user = User::where('username', $request->username)->firstOrFail();
             $user->profile = $this->getUserProfile($user);
-            $user->roles = $this->getUserRole($user);
+            $roles = $this->getUserRole($user);
+			$user->role_code = $roles->name;
+			$user->role_name = $roles->display_name;
             $user->token = 'Bearer ' . $token;
-            $credential = array($user);
+			unset($user->roles);
 
-            return $this->apiResponse(200, 'Authentication success', $credential);
+            return $this->apiResponse(200, 'Authentication success', $user);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
