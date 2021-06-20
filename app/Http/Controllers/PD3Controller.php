@@ -43,7 +43,7 @@ class PD3Controller extends Controller
                 return $this->apiResponse(201, 'Bobot Penilaian Tidak Sesuai', null);
             }
             $beasiswa = Beasiswa::create($request->all());
-            return $this->apiResponse(200, 'success', ['beasiswa' => $beasiswa]);
+            return $this->apiResponse(200, 'success', $beasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }

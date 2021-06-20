@@ -17,9 +17,58 @@ require_once __DIR__.'/../vendor/autoload.php';
 |
 */
 
-$app = new Laravel\Lumen\Application(
-    dirname(__DIR__)
+//Custom For Migration Generator
+class Application extends Laravel\Lumen\Application
+{
+    /**
+     * Get the path to the application configuration files.
+     *
+     * @param string $path Optionally, a path to append to the config path
+     * @return string
+     */
+    public function configPath($path = '')
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'config'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+}
+
+if (!function_exists('config_path')) {
+    /**
+     * Get the configuration path.
+     *
+     * @param  string $path
+     * @return string
+     */
+    function config_path($path = '')
+    {
+        return app()->basePath() . '/config' . ($path ? '/' . $path : $path);
+    }
+}
+
+if (!function_exists('app_path')) {
+    /**
+     * Get the path to the application folder.
+     *
+     * @param  string $path
+     * @return string
+     */
+    function app_path($path = '')
+    {
+        return app('path') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
+class_alias('Illuminate\Support\Facades\Config', 'Config');
+
+$app = new Application(
+    realpath(__DIR__.'/../')
 );
+// Till This
+
+// This is the real one
+//$app = new Laravel\Lumen\Application(
+//    dirname(__DIR__)
+//);
 
 $app->withFacades();
 
@@ -90,6 +139,9 @@ $app->register(App\Providers\AuthServiceProvider::class);
 
 // Add this line
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(\Way\Generators\GeneratorsServiceProvider::class);
+$app->register(\Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

@@ -20,10 +20,10 @@ class Controller extends BaseController
         }
         return response()->json([
             'status' => $status,
-            'message' => $message,
+            'message' => "Terjadi kesalahan di server",
         ], 500);
     }
-	
+
     public function apiResponse($status, $message, $result = null)
     {
         if ($result) {
@@ -71,7 +71,8 @@ class Controller extends BaseController
             //$userRoles = "User ini belum memiliki role";
             if ($user->roles()->exists()) {
                 $roles = $user->roles;
-                $userRoles = $roles[0];
+                $userRoles = $roles;
+                unset($roles);
             }
             return $userRoles;
         } catch (Exception $e) {

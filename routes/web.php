@@ -23,9 +23,43 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 	//$router->post('logout', 'AuthController@logout');
 
 	$router->group(['prefix' => 'auth'], function () use ($router) {
-		$router->post('login', 'AuthController@login');
+        $router->post('login', 'AuthController@login');
+        $router->put('change_password', 'AuthController@change_password');
 	});
-	
+
+    $router->group(['prefix' => 'user'], function () use ($router) {
+        $router->group(['prefix' => 'mahasiswa'], function () use ($router) {
+            $router->get('/', 'AdminController@getMahasiswa');
+            $router->post('/', 'AdminController@storeMahasiswa');
+            $router->put('/', 'AdminController@updateMahasiswa');
+            $router->post('/', 'AdminController@destroyMahasiswa');
+        });
+        $router->group(['prefix' => 'wali_kelas'], function () use ($router) {
+            $router->get('/', 'AdminController@getWaliKelas');
+            $router->post('/', 'AdminController@storeWaliKelas');
+            $router->put('/', 'AdminController@updateWaliKelas');
+            $router->delete('/', 'AdminController@destroyWaliKelas');
+        });
+        $router->group(['prefix' => 'ketua_program_studi'], function () use ($router) {
+            $router->get('/', 'AdminController@getKetuaProgramStudi');
+            $router->post('/', 'AdminController@storeKetuaProgramStudi');
+            $router->put('/', 'AdminController@updateKetuaProgramStudi');
+            $router->delete('/', 'AdminController@destroyKetuaProgramStudi');
+        });
+        $router->group(['prefix' => 'ketua_jurusan'], function () use ($router) {
+            $router->get('/', 'AdminController@getKetuaJurusan');
+            $router->post('/', 'AdminController@storeKetuaJurusan');
+            $router->put('/', 'AdminController@updateKetuaJurusan');
+            $router->delete('/', 'AdminController@destroyKetuaJurusan');
+        });
+        $router->group(['prefix' => 'pembantu_direktur_3'], function () use ($router) {
+            $router->get('/', 'AdminController@getPembantuDirektur3');
+            $router->post('/', 'AdminController@storePembantuDirektur3');
+            $router->put('/', 'AdminController@updatePembantuDirektur3');
+            $router->delete('/', 'AdminController@destroyPembantuDirektur3');
+        });
+    });
+
 	$router->group(['prefix' => 'admin'], function () use ($router) {
 		$router->get('user/', 'AdminController@getUser');
 		$router->get('user/all', 'AdminController@getAllUser');

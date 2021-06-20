@@ -19,17 +19,17 @@ class JurusanController extends Controller
 		if (!$request->length){
 			$length = 10;
 		} else {
-			$length = $request->length;		
+			$length = $request->length;
 		}
 		if (!$request->page){
 			$page = 1;
 		} else {
-			$page = $request->page;		
+			$page = $request->page;
 		}
 		if (!$request->search_text){
 			$search_text = "";
 		} else {
-			$search_text = $request->search_text;		
+			$search_text = $request->search_text;
 		}
 
         try {
@@ -37,12 +37,15 @@ class JurusanController extends Controller
                 $jurusan = array(Jurusan::findOrFail($request->id));
                 $jurusan[0]->program_studi = ProgramStudi::where('jurusan_id', $request->id)->get();
             } else {
-                $jurusan = Jurusan::where('nama', 'like', '%'.$search_text.'%')->skip(($page-1)*$length)->take($length)->get();
+                $query = Jurusan::where('nama', 'like', '%'.$search_text.'%');
+
+                $count = $query->count();
+                $jurusan = $query->skip(($page-1)*$length)->take($length)->get();
                 foreach ($jurusan as $value){
                     $value->program_studi = ProgramStudi::where('jurusan_id', $value->id)->get();
                 }
             }
-            return $this->apiResponseGet(200, Jurusan::count(), $jurusan);
+            return $this->apiResponseGet(200, $count, $jurusan);
         } catch (\Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }

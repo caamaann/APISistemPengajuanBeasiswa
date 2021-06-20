@@ -5,15 +5,17 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use \Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Role;
+use Illuminate\Database\Eloquent\Model;
 
 class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('guest', ['except' => ['logout']]);
-        $this->middleware('auth', ['only' => ['logout']]);
+//        $this->middleware('guest', ['except' => ['logout']]);
+        $this->middleware('auth', ['except' => ['login']]);
     }
 
     // public function register(Request $request)
@@ -60,12 +62,39 @@ class AuthController extends Controller
             $user = User::where('username', $request->username)->firstOrFail();
             $user->profile = $this->getUserProfile($user);
             $roles = $this->getUserRole($user);
-			$user->role_code = $roles->name;
-			$user->role_name = $roles->display_name;
+			$user->role_code = $roles[0]->name;
+			$user->role_name = $roles[0]->display_name;
             $user->token = 'Bearer ' . $token;
 			unset($user->roles);
 
             return $this->apiResponse(200, 'Authentication success', $user);
+        } catch (\Exception $e) {
+            return $this->apiResponse(201, $e->getMessage(), null);
+        }
+    }
+
+    public function change_password(Request $request)
+    {
+        $this->validate($request, [
+            'old_password' => 'required',
+            'new_password' => 'required',
+            'confirm_password' => 'required',
+        ]);
+
+        try {
+            $currentPassword = Auth::user()->getAuthPassword();
+            if (!app('hash')->check($request->old_password, $currentPassword)){
+                return $this->apiResponse(500, 'Password lama salah', null);
+            }
+            if (!Str::is($request->new_password, $request->confirm_password)){
+                return $this->apiResponse(500, 'Konfirmasi password baru tidak sama dengan password baru', null);
+            }
+            $user = User::where('username', Auth::user()->username)->firstOrFail();
+            $user->password = app('hash')->make($request->new_password);
+            $user->save();
+            $user->new_password = $request->new_password;
+
+            return $this->apiResponse(200, 'Password berhasil diganti', $user);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }

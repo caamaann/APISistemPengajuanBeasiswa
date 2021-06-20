@@ -17,37 +17,39 @@ class ProgramStudiController extends Controller
 
     public function get(Request $request)
     {
-		if (!$request->length){
-			$length = 10;
-		} else {
-			$length = $request->length;		
-		}
-		if (!$request->page){
-			$page = 1;
-		} else {
-			$page = $request->page;		
-		}
-		if (!$request->search_text){
-			$search_text = "";
-		} else {
-			$search_text = $request->search_text;		
-		}
-		
+        if (!$request->length) {
+            $length = 10;
+        } else {
+            $length = $request->length;
+        }
+        if (!$request->page) {
+            $page = 1;
+        } else {
+            $page = $request->page;
+        }
+        if (!$request->search_text) {
+            $search_text = "";
+        } else {
+            $search_text = $request->search_text;
+        }
+
         try {
             if ($request->id) {
                 $program_studi = array(ProgramStudi::findOrFail($request->id));
             } else {
-		if (!$request->jurusan_id){
-                $program_studi = ProgramStudi::where('nama', 'like', '%'.$search_text.'%')->skip(($page-1)*$length)->take($length)->get();
-		} else {
-                $program_studi = ProgramStudi::where('nama', 'like', '%'.$search_text.'%')->where('jurusan_id', $request->jurusan_id)->skip(($page-1)*$length)->take($length)->get();
-		}
-				foreach($program_studi as $value){
-					$jurusan = Jurusan::where('id', $value->jurusan_id)->get();
-					$value->jurusan_nama = $jurusan[0]->nama;
-				}
+                $query = ProgramStudi::where('nama', 'like', '%' . $search_text . '%');
+                if ($request->jurusan_id) {
+                    $query->where('jurusan_id', $request->jurusan_id);
+                }
+
+                $count = $query->count();
+                $program_studi = $query->skip(($page - 1) * $length)->take($length)->get();
+                foreach ($program_studi as $value) {
+                    $jurusan = Jurusan::where('id', $value->jurusan_id)->get();
+                    $value->jurusan_nama = $jurusan[0]->nama;
+                }
             }
-           return $this->apiResponseGet(200, ProgramStudi::count(), $program_studi);
+            return $this->apiResponseGet(200, $count, $program_studi);
         } catch (\Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
@@ -60,7 +62,7 @@ class ProgramStudiController extends Controller
             'jurusan_id' => 'required',
         ]);
         try {
-            if (!Jurusan::where('id', $request->jurusan_id)->first()){
+            if (!Jurusan::where('id', $request->jurusan_id)->first()) {
                 return $this->apiResponse(500, 'Jurusan tidak ditemukan', null);
             }
             if (!ProgramStudi::where('nama', $request->nama)->first()) {
@@ -85,7 +87,7 @@ class ProgramStudiController extends Controller
             'nama' => 'required|string',
         ]);
         try {
-            if (!Jurusan::where('id', $request->jurusan_id)->first()){
+            if (!Jurusan::where('id', $request->jurusan_id)->first()) {
                 return $this->apiResponse(500, 'Jurusan tidak ditemukan', null);
             }
             $program_studi = ProgramStudi::findOrFail($request->id);
