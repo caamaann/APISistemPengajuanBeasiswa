@@ -83,7 +83,8 @@ class AdminController extends Controller
 
         try {
             if ($request->id) {
-                $mahasiswa = array(Mahasiswa::where('id', $request->id)->with('user', 'waliKelas', 'programStudi')->get());
+                $mahasiswa = Mahasiswa::where('id', $request->id)->with('user', 'waliKelas', 'programStudi')->get();
+                $count = 1;
             } else {
                 $query = Mahasiswa::select('mahasiswa.*', 'program_studi.jurusan_id')->where('mahasiswa.nama', 'like', '%'.$search_text.'%');
                 $query->leftJoin('program_studi','mahasiswa.program_studi_id','=','program_studi.id');
@@ -116,14 +117,14 @@ class AdminController extends Controller
     public function storeMahasiswa(Request $request)
     {
         $this->validate($request, [
-            'nim' => 'required|string|max:10|unique:mahasiswa,nim|unique:users,username',
+            'nim' => 'required|string|unique:mahasiswa,nim|unique:users,username',
             'nama' => 'required|string',
             'email' => 'required|email|unique:mahasiswa,email',
-            'wali_kelas_id' => 'required|integer',
-            'program_studi_id' => 'required|integer',
-            'semester' => 'required|integer|gt:0|lt:8',
-            'angkatan' => 'required|integer|gt:0',
-            'ipk' => 'required|gt:0|lt:4',
+            'wali_kelas_id' => 'required',
+            'program_studi_id' => 'required',
+            'semester' => 'required',
+            'angkatan' => 'required',
+            'ipk' => 'required',
         ]);
         try {
             $user = new User;
@@ -159,15 +160,15 @@ class AdminController extends Controller
     {
         $mahasiswa = Mahasiswa::findOrFail($request->id);
         $this->validate($request, [
-            'id' => 'required|integer',
-            'nim' => 'required|string|max:10|unique:mahasiswa,nim,' . $mahasiswa->id,
+            'id' => 'required',
+            'nim' => 'required|string|unique:mahasiswa,nim,' . $mahasiswa->id,
             'nama' => 'required|string',
             'email' => 'required|email|unique:mahasiswa,email,' . $mahasiswa->id,
-            'wali_kelas_id' => 'required|integer',
-            'program_studi_id' => 'required|integer',
-            'semester' => 'required|integer|gt:0|lt:8',
-            'angkatan' => 'required|integer|gt:0',
-            'ipk' => 'required|gt:0|lt:4',
+            'wali_kelas_id' => 'required',
+            'program_studi_id' => 'required',
+            'semester' => 'required',
+            'angkatan' => 'required',
+            'ipk' => 'required',
         ]);
         try {
             $user = $mahasiswa->user;
@@ -194,14 +195,14 @@ class AdminController extends Controller
     public function destroyMahasiswa(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|integer',
+            'id' => 'required',
         ]);
         try {
             $mahasiswa = Mahasiswa::findOrFail($request->id);
             $user = $mahasiswa->user;
             $mahasiswa->delete();
             $user->delete();
-            return $this->apiResponse(200, 'Mahasiswa berhasil dihapus', null);
+            return $this->apiResponse(200, 'Mahasiswa berhasil dihapus', $user);
         } catch (\Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
@@ -237,7 +238,8 @@ class AdminController extends Controller
 
         try {
             if ($request->id) {
-                $wali_kelas = array(WaliKelas::where('id', $request->id)->with('user', 'jurusan')->get());
+                $wali_kelas = WaliKelas::where('id', $request->id)->with('user', 'jurusan')->get();
+                $count = 1;
             } else {
                 $query = WaliKelas::where('nama', 'like', '%'.$search_text.'%');
                 if ($request->jurusan_id) {
@@ -256,9 +258,9 @@ class AdminController extends Controller
     public function storeWaliKelas(Request $request)
     {
         $this->validate($request, [
-            'nip' => 'required|string|max:20',
-            'nama' => 'required|string',
-            'jurusan_id' => 'required|integer',
+            'nip' => 'required',
+            'nama' => 'required',
+            'jurusan_id' => 'required',
         ]);
         try {
             $jurusan = Jurusan::findOrFail($request->jurusan_id);
@@ -322,7 +324,7 @@ class AdminController extends Controller
             $user = $waliKelas->user;
             $waliKelas->delete();
             $user->delete();
-            return $this->apiResponse(200, 'Wali kelas berhasil dihapus', null);
+            return $this->apiResponse(200, 'Wali kelas berhasil dihapus', $user);
         } catch (\Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
@@ -357,7 +359,8 @@ class AdminController extends Controller
 
         try {
             if ($request->id) {
-                $ketua_prodi = array(KetuaProgramStudi::where('id', $request->id)->with('user', 'programStudi')->get());
+                $ketua_prodi = KetuaProgramStudi::where('id', $request->id)->with('user', 'programStudi')->get();
+                $count = 1;
             } else {
                 $query = KetuaProgramStudi::select('ketua_program_studi.*', 'program_studi.jurusan_id')->where('ketua_program_studi.nama', 'like', '%'.$search_text.'%');
                 $query->leftJoin('program_studi','ketua_program_studi.program_studi_id','=','program_studi.id');
@@ -384,9 +387,9 @@ class AdminController extends Controller
     public function storeKetuaProgramStudi(Request $request)
     {
         $this->validate($request, [
-            'nip' => 'required|string|max:20',
-            'nama' => 'required|string',
-            'program_studi_id' => 'required|integer',
+            'nip' => 'required',
+            'nama' => 'required',
+            'program_studi_id' => 'required',
         ]);
         try {
             $programStudi = ProgramStudi::findOrFail($request->program_studi_id);
@@ -415,10 +418,10 @@ class AdminController extends Controller
     public function updateKetuaProgramStudi(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|integer',
-            'nip' => 'required|string|max:20',
-            'nama' => 'required|string',
-            'program_studi_id' => 'required|integer',
+            'id' => 'required',
+            'nip' => 'required|string',
+            'nama' => 'required',
+            'program_studi_id' => 'required',
         ]);
         try {
             $ketuaProgramStudi = KetuaProgramStudi::findOrFail($request->id);
@@ -444,14 +447,14 @@ class AdminController extends Controller
     public function destroyKetuaProgramStudi(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|integer',
+            'id' => 'required',
         ]);
         try {
             $ketuaProgramStudi = KetuaProgramStudi::findOrFail($request->id);
             $user = $ketuaProgramStudi->user;
             $ketuaProgramStudi->delete();
             $user->delete();
-            return $this->apiResponse(200, 'Ketua Program Studi berhasil dihapus', null);
+            return $this->apiResponse(200, 'Ketua Program Studi berhasil dihapus', $user);
         } catch (\Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
@@ -486,7 +489,8 @@ class AdminController extends Controller
 
         try {
             if ($request->id) {
-                $ketua_jurusan = array(KetuaJurusan::where('id', $request->id)->with('user', 'jurusan')->get());
+                $ketua_jurusan = KetuaJurusan::where('id', $request->id)->with('user', 'jurusan')->get();
+                $count = 1;
             } else {
                 $query = KetuaJurusan::where('nama', 'like', '%'.$search_text.'%');
                 if ($request->jurusan_id) {
@@ -505,9 +509,9 @@ class AdminController extends Controller
     public function storeKetuaJurusan(Request $request)
     {
         $this->validate($request, [
-            'nip' => 'required|string|max:20',
-            'nama' => 'required|string',
-            'jurusan_id' => 'required|integer',
+            'nip' => 'required',
+            'nama' => 'required',
+            'jurusan_id' => 'required',
         ]);
         try {
             $jurusan = Jurusan::findOrFail($request->jurusan_id);
@@ -536,10 +540,10 @@ class AdminController extends Controller
     public function updateKetuaJurusan(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|integer',
-            'nip' => 'required|string|max:20',
-            'nama' => 'required|string',
-            'jurusan_id' => 'required|integer',
+            'id' => 'required',
+            'nip' => 'required',
+            'nama' => 'required',
+            'jurusan_id' => 'required',
         ]);
         try {
             $ketuaJurusan = KetuaJurusan::findOrFail($request->id);
@@ -572,7 +576,7 @@ class AdminController extends Controller
             $user = $ketuaJurusan->user;
             $ketuaJurusan->delete();
             $user->delete();
-            return $this->apiResponse(200, 'Ketua Jurusan berhasil dihapus', null);
+            return $this->apiResponse(200, 'Ketua Jurusan berhasil dihapus', $user);
         } catch (\Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
@@ -608,6 +612,7 @@ class AdminController extends Controller
         try {
             if ($request->id) {
                 $pd3 = array(PembantuDirektur3::where('id', $request->id)->with('user')->get());
+                $count = 1;
             } else {
                 $query = PembantuDirektur3::where('nama', 'like', '%'.$search_text.'%');
 
@@ -624,8 +629,8 @@ class AdminController extends Controller
     public function storePembantuDirektur3(Request $request)
     {
         $this->validate($request, [
-            'nip' => 'required|string|max:20',
-            'nama' => 'required|string',
+            'nip' => 'required',
+            'nama' => 'required',
         ]);
         try {
             $pd3Role = Role::where('name', 'pd3')->firstOrFail();
@@ -652,9 +657,9 @@ class AdminController extends Controller
     public function updatePembantuDirektur3(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|integer',
-            'nip' => 'required|string|max:20',
-            'nama' => 'required|string',
+            'id' => 'required',
+            'nip' => 'required',
+            'nama' => 'required',
         ]);
         try {
             $pd3 = PembantuDirektur3::findOrFail($request->id);
@@ -678,14 +683,14 @@ class AdminController extends Controller
     public function destroyPembantuDirektur3(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|integer'
+            'id' => 'required'
         ]);
         try {
             $pd3 = PembantuDirektur3::findOrFail($request->id);
             $user = $pd3->user;
             $pd3->delete();
             $user->delete();
-            return $this->apiResponse(200, 'Pembantu Direktur III berhasil dihapus', null);
+            return $this->apiResponse(200, 'Pembantu Direktur III berhasil dihapus', $user);
         } catch (\Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }

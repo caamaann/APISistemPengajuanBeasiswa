@@ -36,6 +36,7 @@ class JurusanController extends Controller
             if ($request->id) {
                 $jurusan = array(Jurusan::findOrFail($request->id));
                 $jurusan[0]->program_studi = ProgramStudi::where('jurusan_id', $request->id)->get();
+                $count = 1;
             } else {
                 $query = Jurusan::where('nama', 'like', '%'.$search_text.'%');
 

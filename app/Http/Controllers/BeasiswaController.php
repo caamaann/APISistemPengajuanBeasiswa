@@ -12,7 +12,7 @@ use DB;
 
 class BeasiswaController extends Controller
 {
-    public function get(Request $request)
+    public function getBeasiswa(Request $request)
     {
         if (!$request->length) {
             $length = 10;
@@ -70,23 +70,14 @@ class BeasiswaController extends Controller
             'akhir_pendaftaran' => 'required|date|after:awal_pendaftaran',
             'awal_penerimaan' => 'required|date|after:awal_pendaftaran|after:akhir_pendaftaran|before:akhir_penerimaan',
             'akhir_penerimaan' => 'required|date|after:awal_pendaftaran|after:akhir_pendaftaran|after:awal_penerimaan',
-            'biaya_pendidikan_per_semester' => 'required|integer',
-            'penghasilan_orang_tua_maksimal' => 'required|integer',
+            'penghasilan_orang_tua_maksimal' => 'required',
             'ipk_minimal' => 'required',
-            'bobot_ipk' => 'required|integer|gt:0|lte:100',
-            'bobot_prestasi' => 'required|integer|gt:0|lte:100',
-            'bobot_perilaku' => 'required|integer|gt:0|lte:100',
-            'bobot_organisasi' => 'required|integer|gt:0|lte:100',
-            'bobot_kemampuan_ekonomi' => 'required|integer|gt:0|lte:100',
-
         ]);
 
         try {
-            if ($request->bobot_ipk + $request->bobot_prestasi + $request->bobot_perilaku + $request->bobot_organisasi + $request->bobot_kemampuan_ekonomi != 100) {
-                return $this->apiResponse(201, 'Bobot Penilaian Tidak Sesuai', null);
-            }
+            $kriteria = $request->pembobotan_kriteria;
             $beasiswa = Beasiswa::create($request->all());
-            return $this->apiResponse(200, 'success', ['beasiswa' => $beasiswa]);
+            return $this->apiResponse(200, 'success', $beasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -105,16 +96,9 @@ class BeasiswaController extends Controller
             'biaya_pendidikan_per_semester' => 'integer',
             'penghasilan_orang_tua_maksimal' => 'integer',
             'ipk_minimal' => 'required',
-            'bobot_ipk' => 'required|integer|gt:0|lte:100',
-            'bobot_prestasi' => 'required|integer|gt:0|lte:100',
-            'bobot_perilaku' => 'required|integer|gt:0|lte:100',
-            'bobot_organisasi' => 'required|integer|gt:0|lte:100',
-            'bobot_kemampuan_ekonomi' => 'required|integer|gt:0|lte:100',
         ]);
         try {
-            if ($request->bobot_ipk + $request->bobot_prestasi + $request->bobot_perilaku + $request->bobot_organisasi + $request->bobot_kemampuan_ekonomi != 100) {
-                return $this->apiResponse(201, 'Bobot Penilaian Tidak Sesuai', null);
-            }
+
             $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
             $beasiswa->update($request->all());
             return $this->apiResponse(200, 'success', $beasiswa);

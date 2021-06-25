@@ -36,6 +36,7 @@ class ProgramStudiController extends Controller
         try {
             if ($request->id) {
                 $program_studi = array(ProgramStudi::findOrFail($request->id));
+                $count = 1;
             } else {
                 $query = ProgramStudi::where('nama', 'like', '%' . $search_text . '%');
                 if ($request->jurusan_id) {
