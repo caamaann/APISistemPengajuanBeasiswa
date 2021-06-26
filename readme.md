@@ -11,9 +11,11 @@ Laravel Lumen is a stunningly fast PHP micro-framework for building web applicat
 ## How to Run
 create db with name "db_sistem_pengajuan_beasiswa"
 command:
-1. "composer install"
-2. php artisan migrate:fresh --seed
-3. php -S localhost:8001 -t public
+1. copy .env.example, and rename to .env
+2. "composer install"
+3. php artisan migrate:fresh --seed
+4. php artisan jwt:secret
+5. php -S localhost:8001 -t public
 
 ## Official Documentation
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\PerbandinganKriteria;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Beasiswa;
 use App\ProgramStudi;
@@ -33,17 +35,11 @@ class BeasiswaController extends Controller
         try {
             if ($request->id) {
                 $beasiswa = array(Beasiswa::findOrFail($request->id));
-                $program_studi = array();
-                foreach ($beasiswa[0]->programStudi as $item) {
-                    $list_kuota = array(
-                        'id' => $item->id,
-                        'nama' => $item->nama,
-                        'angkatan' => $item->pivot->angkatan,
-                        'kuota' => $item->pivot->kuota,
-                    );
-                    array_push($program_studi, $list_kuota);
-                }
-                $beasiswa[0]->programStudi = $program_studi;
+                $beasiswa[0]->programStudi;
+                $pembobotan = PerbandinganKriteria::where('beasiswa_id', $request->id)->get();
+                $beasiswa[0]->pembobotan = $pembobotan;
+
+                $count = 1;
             } else {
                 $query = Beasiswa::where('nama', 'like', '%' . $search_text . '%');
                 if ($request->is_active === 1) {
@@ -75,9 +71,24 @@ class BeasiswaController extends Controller
         ]);
 
         try {
-            $kriteria = $request->pembobotan_kriteria;
+            $pembobotan = $request->pembobotan;
+            $cr = $this->getCRforAHP($pembobotan);
+            if ($cr >= 0.1){
+                return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
+            }
+
             $beasiswa = Beasiswa::create($request->all());
-            return $this->apiResponse(200, 'success', $beasiswa);
+            foreach ($pembobotan as $item){
+                $perbandingan_kriteria = new PerbandinganKriteria;
+                $perbandingan_kriteria->beasiswa_id = $beasiswa->id;
+                $perbandingan_kriteria->kriteria_1 = $item['kriteria_1'];
+                $perbandingan_kriteria->bobot_1 = $item['bobot_1'];
+                $perbandingan_kriteria->kriteria_2 = $item['kriteria_2'];
+                $perbandingan_kriteria->bobot_2 = $item['bobot_2'];
+                $perbandingan_kriteria->save();
+            }
+
+            return $this->apiResponse(200, 'Beasiswa berhasil ditambahkan', $beasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -86,22 +97,40 @@ class BeasiswaController extends Controller
     public function updateBeasiswa(Request $request)
     {
         $this->validate($request, [
-            'beasiswa_id' => 'required|integer',
+            'id' => 'required',
             'nama' => 'string',
             'deskripsi' => 'string',
             'awal_pendaftaran' => 'date|before:akhir_pendaftaran',
             'akhir_pendaftaran' => 'date|after:awal_pendaftaran',
             'awal_penerimaan' => 'date|after:awal_pendaftaran|after:akhir_pendaftaran|before:akhir_penerimaan',
             'akhir_penerimaan' => 'date|after:awal_pendaftaran|after:akhir_pendaftaran|after:awal_penerimaan',
-            'biaya_pendidikan_per_semester' => 'integer',
-            'penghasilan_orang_tua_maksimal' => 'integer',
+            'penghasilan_orang_tua_maksimal' => 'required',
             'ipk_minimal' => 'required',
         ]);
         try {
+            $beasiswa = Beasiswa::findOrFail($request->id);
+            $pembobotan = $request->pembobotan;
+            $cr = $this->getCRforAHP($pembobotan);
+            if ($cr >= 0.1){
+                return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
+            }
 
-            $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
             $beasiswa->update($request->all());
-            return $this->apiResponse(200, 'success', $beasiswa);
+            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)){
+                $bobot->delete();
+            }
+
+            foreach ($pembobotan as $item){
+                $perbandingan_kriteria = new PerbandinganKriteria;
+                $perbandingan_kriteria->beasiswa_id = $beasiswa->id;
+                $perbandingan_kriteria->kriteria_1 = $item['kriteria_1'];
+                $perbandingan_kriteria->bobot_1 = $item['bobot_1'];
+                $perbandingan_kriteria->kriteria_2 = $item['kriteria_2'];
+                $perbandingan_kriteria->bobot_2 = $item['bobot_2'];
+                $perbandingan_kriteria->save();
+            }
+
+            return $this->apiResponse(200, 'Beasiswa berhasil diubah', $beasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -114,8 +143,11 @@ class BeasiswaController extends Controller
         ]);
         try {
             $beasiswa = Beasiswa::findOrFail($request->id);
-            Beasiswa::destroy($request->beasiswa_id);
-            return $this->apiResponse(200, 'success', $beasiswa);
+            Beasiswa::destroy($request->id);
+            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)){
+                $bobot->delete();
+            }
+            return $this->apiResponse(200, 'Beasiswa berhasil dihapus', $beasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }

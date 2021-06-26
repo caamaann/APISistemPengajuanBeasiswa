@@ -43,7 +43,7 @@ class MahasiswaController extends Controller
             ]);
             $mahasiswa->fill($request->only(['nama', 'tempat_lahir', 'tanggal_lahir', 'gender', 'nama_bank', 'nomor_rekening', 'alamat', 'kota', 'kode_pos', 'nomor_hp']));
             $mahasiswa->save();
-            return $this->apiResponse(200, 'success', ['mahasiswa' => $mahasiswa]);
+            return $this->apiResponse(200, 'Mahasiswa berhasil diubah', $mahasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -55,9 +55,9 @@ class MahasiswaController extends Controller
             $user = Auth::User();
             $mahasiswa = $user->mahasiswa;
             if ($mahasiswa->orangTuaMahasiswa()->exists()) {
-                return $this->apiResponse(200, 'success', ['orang_tua' => $mahasiswa->orangTuaMahasiswa]);
+                return $this->apiResponse(200, 'success', $mahasiswa->orangTuaMahasiswa);
             }
-            return $this->apiResponse(201, 'error, belum mengisi data orangtua', null);
+            return $this->apiResponse(200, 'Mahasiswa belum mengisi data orang tua', []);
         } catch (Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -66,24 +66,24 @@ class MahasiswaController extends Controller
     public function storeOrangTua(Request $request)
     {
         $this->validate($request, [
-            'nama_ayah' => 'required|string',
-            'tempat_lahir_ayah' => 'required|string',
-            'tanggal_lahir_ayah' => 'required|date|before:today',
-            'alamat_ayah' => 'required|string',
-            'nomor_hp_ayah' => 'required|string|max:13',
-            'pekerjaan_ayah' => 'required|string',
-            'penghasilan_ayah' => 'required|integer',
-            'pekerjaan_sambilan_ayah' => 'required|string',
-            'penghasilan_sambilan_ayah' => 'required|integer',
-            'nama_ibu' => 'required|string',
-            'tempat_lahir_ibu' => 'required|string',
-            'tanggal_lahir_ibu' => 'required|date|before:today',
-            'alamat_ibu' => 'required|string',
-            'nomor_hp_ibu' => 'required|string|max:13',
-            'pekerjaan_ibu' => 'required|string',
-            'penghasilan_ibu' => 'required|integer',
-            'pekerjaan_sambilan_ibu' => 'required|string',
-            'penghasilan_sambilan_ibu' => 'required|integer',
+            'nama_ayah' => 'string',
+            'tempat_lahir_ayah' => 'string',
+            'tanggal_lahir_ayah' => 'date|before:today',
+            'alamat_ayah' => 'string',
+            'nomor_hp_ayah' => 'string',
+            'pekerjaan_ayah' => 'string',
+            'penghasilan_ayah' => 'integer',
+            'pekerjaan_sambilan_ayah' => 'string',
+            'penghasilan_sambilan_ayah' => 'integer',
+            'nama_ibu' => 'string',
+            'tempat_lahir_ibu' => 'string',
+            'tanggal_lahir_ibu' => 'date|before:today',
+            'alamat_ibu' => 'string',
+            'nomor_hp_ibu' => 'string',
+            'pekerjaan_ibu' => 'string',
+            'penghasilan_ibu' => 'integer',
+            'pekerjaan_sambilan_ibu' => 'string',
+            'penghasilan_sambilan_ibu' => 'integer',
         ]);
         try {
             $user = Auth::User();
@@ -93,7 +93,7 @@ class MahasiswaController extends Controller
                 $orangTuaMahasiswa->mahasiswa_id = $mahasiswa->id;
                 $orangTuaMahasiswa->fill($request->all());
                 $orangTuaMahasiswa->save();
-                return $this->apiResponse(200, 'Success', ['orang_tua' => $orangTuaMahasiswa]);
+                return $this->apiResponse(200, 'Berhasil menambahkan orang tua', $orangTuaMahasiswa);
             }
             return $this->apiResponse(201, 'Sudah Insert Orangtua', null);
         } catch (\Exception $e) {
@@ -130,9 +130,9 @@ class MahasiswaController extends Controller
                 $orangTuaMahasiswa = $mahasiswa->orangTuaMahasiswa;
                 $orangTuaMahasiswa->fill($request->all());
                 $orangTuaMahasiswa->save();
-                return $this->apiResponse(200, 'Success', ['orang_tua' => $orangTuaMahasiswa]);
+                return $this->apiResponse(200, 'Success', $orangTuaMahasiswa);
             }
-            return $this->apiResponse(201, 'Belum insert orangtua', null);
+            return $this->apiResponse(201, 'Belum menambahkan orangtua', null);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -143,7 +143,7 @@ class MahasiswaController extends Controller
         try {
             $user = Auth::User();
             $mahasiswa = $user->mahasiswa;
-            return $this->apiResponse(200, 'success', ['saudara' => $mahasiswa->saudaraMahasiswa]);
+            return $this->apiResponseGet(200, count($mahasiswa->saudaraMahasiswa), $mahasiswa->saudaraMahasiswa);
         } catch (Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -152,7 +152,7 @@ class MahasiswaController extends Controller
     public function getSaudara(Request $request)
     {
         $this->validate($request, [
-            'saudara_id' => 'required|integer',
+            'saudara_id' => 'required',
         ]);
         try {
             $user = Auth::User();
@@ -160,7 +160,7 @@ class MahasiswaController extends Controller
             $saudara = SaudaraMahasiswa::where('id', $request->saudara_id)
                 ->where('mahasiswa_id', $mahasiswa->id)
                 ->firstOrFail();
-            return $this->apiResponse(200, 'success', ['saudara' => $saudara]);
+            return $this->apiResponse(200, 'success', $saudara);
         } catch (Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -182,7 +182,7 @@ class MahasiswaController extends Controller
             $saudaraMahasiswa->mahasiswa_id = $mahasiswa->id;
             $saudaraMahasiswa->fill($request->all());
             $saudaraMahasiswa->save();
-            return $this->apiResponse(200, 'Success', ['saudara' => $saudaraMahasiswa]);
+            return $this->apiResponse(200, 'Berhasil menambahkan saudara mahasiswa', $saudaraMahasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -203,7 +203,7 @@ class MahasiswaController extends Controller
             $mahasiswa = $user->mahasiswa;
             $saudaraMahasiswa = SaudaraMahasiswa::where('id', $request->saudara_id)->where('mahasiswa_id', $mahasiswa->id)->firstOrFail();
             $saudaraMahasiswa->update($request->all());
-            return $this->apiResponse(200, 'Success', ['saudara' => $saudaraMahasiswa]);
+            return $this->apiResponse(200, 'Saudara mahasiswa berhasil diubah', $saudaraMahasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -212,14 +212,14 @@ class MahasiswaController extends Controller
     public function destroySaudara(Request $request)
     {
         $this->validate($request, [
-            'saudara_id' => 'required|integer',
+            'id' => 'required',
         ]);
         try {
             $user = Auth::User();
             $mahasiswa = $user->mahasiswa;
-            $saudaraMahasiswa = SaudaraMahasiswa::where('id', $request->saudara_id)->where('mahasiswa_id', $mahasiswa->id)->firstOrFail();
+            $saudaraMahasiswa = SaudaraMahasiswa::where('id', $request->id)->where('mahasiswa_id', $mahasiswa->id)->firstOrFail();
             $saudaraMahasiswa->delete();
-            return $this->apiResponse(200, 'Success, berhasil dihapus', null);
+            return $this->apiResponse(200, 'Saudara mahasiswa berhasil dihapus', $saudaraMahasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -273,60 +273,60 @@ class MahasiswaController extends Controller
     {
         return ($beasiswa->status_pendaftaran == "Dibuka");
     }
-
-    public function getSkorIPK($ipk)
-    {
-        $skorIpk = 0;
-        if ($ipk > 3.75) {
-            $skorIpk = 4;
-        } else if ($ipk > 3.5 && $ipk <= 3.75) {
-            $skorIpk = 3;
-        } else if ($ipk > 3.25 && $ipk <= 3.5) {
-            $skorIpk = 2;
-        } else if ($ipk >= 3.0 && $ipk <= 3.25) {
-            $skorIpk = 1;
-        }
-        return $skorIpk;
-    }
-
-    public function getSkorPenghasilanOrangTua($penghasilanOrangTua)
-    {
-        $skorPenghasilanOrangTua = 0;
-        if ($penghasilanOrangTua <= 1500000) {
-            $skorPenghasilanOrangTua = 4;
-        } else if ($penghasilanOrangTua > 1500000 && $penghasilanOrangTua <= 2500000) {
-            $skorPenghasilanOrangTua = 3;
-        } else if ($penghasilanOrangTua > 2500000 && $penghasilanOrangTua <= 3500000) {
-            $skorPenghasilanOrangTua = 2;
-        } else if ($penghasilanOrangTua > 3500000 && $penghasilanOrangTua <= 5000000) {
-            $skorPenghasilanOrangTua = 1;
-        } else if ($penghasilanOrangTua > 5000000) {
-            $skorPenghasilanOrangTua = 0;
-        }
-        return $skorPenghasilanOrangTua;
-    }
-
-    public function getSkorTanggunganOrangTua($tanggunganOrangTua)
-    {
-        $skorTanggungan = 0;
-        if ($tanggunganOrangTua <= 750000) {
-            $skorTanggungan = 4;
-        } else if ($tanggunganOrangTua > 750000 && $tanggunganOrangTua <= 1000000) {
-            $skorTanggungan = 3;
-        } else if ($tanggunganOrangTua > 1000000 && $tanggunganOrangTua <= 1500000) {
-            $skorTanggungan = 2;
-        } else if ($tanggunganOrangTua > 1500000 && $tanggunganOrangTua <= 2000000) {
-            $skorTanggungan = 1;
-        } else if ($tanggunganOrangTua > 2000000) {
-            $skorTanggungan = 0;
-        }
-        return $skorTanggungan;
-    }
+//
+//    public function getSkorIPK($ipk)
+//    {
+//        $skorIpk = 0;
+//        if ($ipk > 3.75) {
+//            $skorIpk = 4;
+//        } else if ($ipk > 3.5 && $ipk <= 3.75) {
+//            $skorIpk = 3;
+//        } else if ($ipk > 3.25 && $ipk <= 3.5) {
+//            $skorIpk = 2;
+//        } else if ($ipk >= 3.0 && $ipk <= 3.25) {
+//            $skorIpk = 1;
+//        }
+//        return $skorIpk;
+//    }
+//
+//    public function getSkorPenghasilanOrangTua($penghasilanOrangTua)
+//    {
+//        $skorPenghasilanOrangTua = 0;
+//        if ($penghasilanOrangTua <= 1500000) {
+//            $skorPenghasilanOrangTua = 4;
+//        } else if ($penghasilanOrangTua > 1500000 && $penghasilanOrangTua <= 2500000) {
+//            $skorPenghasilanOrangTua = 3;
+//        } else if ($penghasilanOrangTua > 2500000 && $penghasilanOrangTua <= 3500000) {
+//            $skorPenghasilanOrangTua = 2;
+//        } else if ($penghasilanOrangTua > 3500000 && $penghasilanOrangTua <= 5000000) {
+//            $skorPenghasilanOrangTua = 1;
+//        } else if ($penghasilanOrangTua > 5000000) {
+//            $skorPenghasilanOrangTua = 0;
+//        }
+//        return $skorPenghasilanOrangTua;
+//    }
+//
+//    public function getSkorTanggunganOrangTua($tanggunganOrangTua)
+//    {
+//        $skorTanggungan = 0;
+//        if ($tanggunganOrangTua <= 750000) {
+//            $skorTanggungan = 4;
+//        } else if ($tanggunganOrangTua > 750000 && $tanggunganOrangTua <= 1000000) {
+//            $skorTanggungan = 3;
+//        } else if ($tanggunganOrangTua > 1000000 && $tanggunganOrangTua <= 1500000) {
+//            $skorTanggungan = 2;
+//        } else if ($tanggunganOrangTua > 1500000 && $tanggunganOrangTua <= 2000000) {
+//            $skorTanggungan = 1;
+//        } else if ($tanggunganOrangTua > 2000000) {
+//            $skorTanggungan = 0;
+//        }
+//        return $skorTanggungan;
+//    }
 
     public function applyBeasiswa(Request $request)
     {
         $this->validate($request, [
-            'beasiswa_id' => 'required|integer',
+            'beasiswa_id' => 'required',
         ]);
         try {
             $user = Auth::User();
