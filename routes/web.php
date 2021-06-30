@@ -10,7 +10,6 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
@@ -105,57 +104,57 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 //		$router->get('/profile', 'UserController@profile');
 //	});
 //
-//	$router->group(['prefix' => 'mahasiswa'], function () use ($router) {
-//		$router->put('/update', 'MahasiswaController@update');
-//		$router->post('/berkas/store', 'MahasiswaController@storeBerkasWajibMahasiswa');
+	$router->group(['prefix' => 'mahasiswa'], function () use ($router) {
+		$router->put('/update', 'MahasiswaController@update');
+		$router->post('/berkas/store', 'MahasiswaController@storeBerkasWajibMahasiswa');
+
+		$router->group(['prefix' => 'sertifikat'], function () use ($router) {
+			$router->post('/store', 'MahasiswaController@storeSertifikatWajibMahasiswa');
+
+			$router->group(['prefix' => 'prestasi'], function () use ($router) {
+				$router->get('/all', 'MahasiswaController@getAllSertifikatPrestasiMahasiswa');
+				$router->get('/', 'MahasiswaController@getSertifikatPrestasiMahasiswa');
+				$router->post('/store', 'MahasiswaController@storeSertifikatPrestasiMahasiswa');
+				$router->post('/update', 'MahasiswaController@updateSertifikatPrestasiMahasiswa');
+				$router->post('/destroy', 'MahasiswaController@destroySertifikatPrestasiMahasiswa');
+			});
+
+			$router->group(['prefix' => 'organisasi'], function () use ($router) {
+				$router->get('/all', 'MahasiswaController@getAllSertifikatOrganisasiMahasiswa');
+				$router->get('/', 'MahasiswaController@getSertifikatOrganisasiMahasiswa');
+				$router->post('/store', 'MahasiswaController@storeSertifikatOrganisasiMahasiswa');
+				$router->post('/update', 'MahasiswaController@updateSertifikatOrganisasiMahasiswa');
+				$router->post('/destroy', 'MahasiswaController@destroySertifikatOrganisasiMahasiswa');
+			});
+
+		});
+
+		$router->group(['prefix' => 'orangtua'], function () use ($router) {
+			$router->post('/store', 'MahasiswaController@storeOrangTua');
+			$router->put('/update', 'MahasiswaController@updateOrangTua');
+			$router->get('/', 'MahasiswaController@getOrangTua');
+		});
+
+		$router->group(['prefix' => 'saudara'], function () use ($router) {
+			$router->post('/store', 'MahasiswaController@storeSaudara');
+			$router->put('/update', 'MahasiswaController@updateSaudara');
+			$router->post('/destroy', 'MahasiswaController@destroySaudara');
+			$router->get('/all', 'MahasiswaController@getAllSaudara');
+			$router->get('/', 'MahasiswaController@getSaudara');
+		});
+
+		$router->post('/beasiswa/pendaftaran', 'MahasiswaController@applyBeasiswa');
+
+	});
 //
-//		$router->group(['prefix' => 'sertifikat'], function () use ($router) {
-//			$router->post('/store', 'MahasiswaController@storeSertifikatWajibMahasiswa');
 //
-//			$router->group(['prefix' => 'prestasi'], function () use ($router) {
-//				$router->get('/all', 'MahasiswaController@getAllSertifikatPrestasiMahasiswa');
-//				$router->get('/', 'MahasiswaController@getSertifikatPrestasiMahasiswa');
-//				$router->post('/store', 'MahasiswaController@storeSertifikatPrestasiMahasiswa');
-//				$router->post('/update', 'MahasiswaController@updateSertifikatPrestasiMahasiswa');
-//				$router->post('/destroy', 'MahasiswaController@destroySertifikatPrestasiMahasiswa');
-//			});
-//
-//			$router->group(['prefix' => 'organisasi'], function () use ($router) {
-//				$router->get('/all', 'MahasiswaController@getAllSertifikatOrganisasiMahasiswa');
-//				$router->get('/', 'MahasiswaController@getSertifikatOrganisasiMahasiswa');
-//				$router->post('/store', 'MahasiswaController@storeSertifikatOrganisasiMahasiswa');
-//				$router->post('/update', 'MahasiswaController@updateSertifikatOrganisasiMahasiswa');
-//				$router->post('/destroy', 'MahasiswaController@destroySertifikatOrganisasiMahasiswa');
-//			});
-//
-//		});
-//
-//		$router->group(['prefix' => 'orangtua'], function () use ($router) {
-//			$router->post('/store', 'MahasiswaController@storeOrangTua');
-//			$router->put('/update', 'MahasiswaController@updateOrangTua');
-//			$router->get('/', 'MahasiswaController@getOrangTua');
-//		});
-//
-//		$router->group(['prefix' => 'saudara'], function () use ($router) {
-//			$router->post('/store', 'MahasiswaController@storeSaudara');
-//			$router->put('/update', 'MahasiswaController@updateSaudara');
-//			$router->post('/destroy', 'MahasiswaController@destroySaudara');
-//			$router->get('/all', 'MahasiswaController@getAllSaudara');
-//			$router->get('/', 'MahasiswaController@getSaudara');
-//		});
-//
-//		$router->post('/beasiswa/pendaftaran', 'MahasiswaController@applyBeasiswa');
-//
-//	});
-//
-//
-//	$router->group(['prefix' => 'wali_kelas'], function () use ($router) {
-//		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
-//			$router->get('/pendaftar/kelas', 'WaliKelasController@getPendaftarKelas');
-//			$router->get('/pendaftar/kelas/sertifikat', 'WaliKelasController@getSertifikatMahasiswa');
-//			$router->put('/pendaftar/kelas/penilaian', 'WaliKelasController@updateNilaiKelayakan');
-//		});
-//	});
+	$router->group(['prefix' => 'wali_kelas'], function () use ($router) {
+		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
+			$router->get('/pendaftar/kelas', 'WaliKelasController@getPendaftarKelas');
+			$router->get('/pendaftar/kelas/sertifikat', 'WaliKelasController@getSertifikatMahasiswa');
+			$router->put('/pendaftar/kelas/penilaian', 'WaliKelasController@updateNilaiKelayakan');
+		});
+	});
 //
 //	$router->group(['prefix' => 'ketua_program_studi'], function () use ($router) {
 //		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
