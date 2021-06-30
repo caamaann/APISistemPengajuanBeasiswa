@@ -1,0 +1,75 @@
+No	NIM	Nama	Email	IPK	Semester	Angkatan	Status Keaktifan	Wali Kelas	Program Studi	Action
+1	171511019	Wahyu	wahyaumau@gmail.com	3.6	4	2017	Aktif	Dra. Nurjannah Syakrani, MT.	D3-Teknik Informatika	
+2	171511060	Nikita	nikita@gmail.com	3.2	5	2017	Aktif	Jonner Hutahaean, BSET., M.Info.Sys	D3-Teknik Informatika	
+3	171524012	Ilham Gibran	gibran@gmail.com	3.8	4	2017	Aktif	Drs. Eddy Bambang Soewono, M.Kom.	D4-Teknik Informatika	
+4	181511032	Salma	salma.meldiyana.tif18@polban.ac.id	3.6	4	2018	Aktif	Ir. Irawan Thamrin, MT	D3-Teknik Informatika	
+5	175134023	Rifa	rifaah.al.amp17@polban.ac.id	3.6	4	2017	Aktif	Ir. Irawan Thamrin, MT	D4-Akuntansi Manajemen Pemerintahan	
+6	175111005	Bilkis	bilkisti.auliya.akun17@polban.ac.id	3.6	4	2017	Aktif	Drs. Usmani, M.Si	D3-Akuntansi	
+7	171511026	Rifqi Okta	rifqi@gmail.com	3.3	5	2017	Aktif	Dra. Nurjannah Syakrani, MT.	D3-Teknik Informatika	
+8	171511023	Refdinal	refdinal@gmail.com	3.3	5	2017	Aktif	Dra. Nurjannah Syakrani, MT.	D3-Teknik Informatika	
+
+
+No	NIP	Nama	Jurusan	Action
+1	196312131992012001	Dra. Nurjannah Syakrani, MT.	Teknik Komputer dan Informatika	
+2	196210211993031002	Jonner Hutahaean, BSET., M.Info.Sys	Teknik Komputer dan Informatika	
+3	196101141992021001	Drs. Eddy Bambang Soewono, M.Kom.	Teknik Komputer dan Informatika	
+4	196208151990031001	Ir. Irawan Thamrin, MT	Teknik Komputer dan Informatika	
+5	195711121988031001	Drs. Usmani, M.Si	Akuntansi	
+6	195710011995121001	Drs. Ahmad Syarief, SE., M.Si.	Akuntansi	
+
+
+No	NIP	Nama	Jurusan	Action
+1	198208042010122003	FISCA IGUSTIANY,SST.,MT	D3-Teknik Konstruksi Gedung	
+2	198403062009121004	ANGGA MARDITAMA SULTAN SUFANIR, ST., MT.	D3-Teknik Konstruksi Sipil	
+3	198502282012122001	Risna Rismiana Sari, S.T., M.Sc	D4-Teknik Perancangan Jalan Dan Jembatan	
+4	198212142008122004	Ery Radya Juarti, ST., MT.	D4-Teknik Perawatan dan Perbaikan Gedung	
+5	198003242008121004	Prasetyo, ST., M.Eng.	D3-Teknik Mesin	
+6	196309281991021001	Mochammad Luthfi, Dipl. Ing., M.T.	D3-Aeronautika	
+7	198304162008121003	Heri Widiantoro, SST., M.Eng	D4-Teknik Perancangan dan Konstruksi Mesin	
+8	196503211990121001	Aris Suryadi, ST .,MT	D4-Proses Manufaktur	
+9	198210092012122003	Susilawati,S.T., M.Eng.	D3-Teknik Pendingin dan Tata Udara	
+10	197211072006041001	M. Nuriyadi, ST., M.Eng.	D4-Teknik Pendingin dan Tata Udara	
+11	198202262010122005	Sri Utami, SST., M.T.	D3-Teknik Konversi Energi	
+12	197711272010122002	Siti Saodah, S.T., M.T.	D4-Teknologi Pembangkit Tenaga Listrik	
+13	198101202012122001	Yanti Suprianti, S.T., M.T.	D4-Teknik Konservasi Energi	
+14	198510092015041003	Dadan Nurdin Bagenda,S.T., M.T.	D3-Teknik Elektronika	
+15	196305201988111001	Supriyanto, ST., MT	D3-Teknik Listrik	
+16	196001121988111001	Mohammad Farid Susanto, ST., M.Eng.	D3-Teknik Telekomunikasi	
+17	198506092012121006	Feriyonika, S.T., M.Sc.Eng.	D4-Teknik Elektronika	
+18	196012191993031002	Sarjono Wahyu Jadmiko, ST., M.Eng.	D4-Teknik Otomasi Industri	
+19	196311261993031002	Tata Supriyadi DUT., ST., M.Eng.	D4-Teknik Telekomunikasi	
+20	196910161995121001	Rispiandi, ST., MT.	D3-Teknik Kimia	
+21	196505011994032001	Lina Troskialina, B.Sc. M.Sc., Ph.D.	D3-Analis Kimia	
+22	196004141988112001	Ir. Herawati Budiastuti, M.Eng.Sc., Ph.D.	D4-Teknik Kimia Produksi Bersih	
+23	198604122014041001	Ghifari Munawar,S.Kom., M.T.	D3-Teknik Informatika	
+24	197109031999032001	Santi Sundari, S.Si., M.T.	D4-Teknik Informatika	
+25	198111062006042001	Etti Ernita Sembiring, S.E., M.Si	D3-Akuntansi	
+26	195901011993031001	Djoni Djatnika, SE., M.M.	D3-Keuangan dan Perbankan	
+27	197611162009122002	Dr. IRA NOVIANTYM.Si	D4-Akuntansi Manajemen Pemerintahan	
+28	196211041989032001	Dra. Kristianingsih, M.Si.	D4-Keuangan Syariah	
+29	196308181991031002	Iyeh Supriatna, SE. Ak.., M.Si	D4-Akuntansi	
+30	195803031986032001	Dra. Sholihati Amalia, S.Sos., M.Pd.	D3-Administrasi Bisnis	
+31	197608262003122002	Dr. Marceilla Suryana, BA(Hons)., MM.Par.	D3-Usaha Perjalanan Wisata	
+32	199207302018032001	Lina Setiawati, M.A.B	D3-Manajemen Pemasaran	
+33	196203301989032001	Dra. Tintin Suhaeni,S.Sos., M.Si	D4-Administrasi Bisnis	
+34	196109161990031001	Dr. Aceng Gima Sugiama, SE. MP	D4-Manajemen Aset	
+35	196002081990031002	Drs. Agustinus C. Februadi, M.Phil	D4-Manajemen Pemasaran	
+36	195904101989031001	Drs. Saudin, M.Pd	D3-Bahasa Inggris
+
+
+
+No	NIP	Nama	Jurusan	Action
+1	196306061995121001	Hendry, Dipl.Ing.HTL., MT.	Teknik Sipil	
+2	196309031991021001	Dr. Syarif Hidayat, Dipl. Ing., MT	Teknik Mesin	
+3	196612301995121001	Dr. Apip Badarudin, ST., MT.	Teknik Refrigerasi dan Tata Udara	
+4	196611071995121002	Dr.,Drs. Hartono Budi Santoso, MT	Teknik Konversi Energi	
+5	196208291996011001	R. Wahyu Trihartono, DU.Tech.,SST., M.T.	Teknik Elektro	
+6	196607231993031002	Dr., Shoerya Shoelarta, LRSC., M.T.	Teknik Kimia	
+7	197201061999031002	Bambang Wisnuadhi, S.Si., MT.	Teknik Komputer dan Informatika	
+8	196703281993031001	Dr. Iwan Setiawan, SE., ME	Akuntansi	
+9	196712042001121002	Sri Raharso, S.Sos., M.Si.	Administrasi Niaga	
+10	195904101989031001	Drs. SaudinM.Pd	Bahasa Inggris
+
+
+No	NIP	Nama	Action
+1	196504211987031004	Darusi, S.Sos
