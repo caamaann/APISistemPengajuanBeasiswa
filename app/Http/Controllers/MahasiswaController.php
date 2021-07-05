@@ -33,7 +33,7 @@ class MahasiswaController extends Controller
                 'nama' => 'string',
                 'tempat_lahir' => 'string',
                 'tanggal_lahir' => 'date|before:today',
-                'gender' => 'string|max:2',
+                'gender' => 'string',
                 'nama_bank' => 'string',
                 'nomor_rekening' => 'string',
                 'alamat' => 'string',
@@ -55,9 +55,13 @@ class MahasiswaController extends Controller
             $user = Auth::User();
             $mahasiswa = $user->mahasiswa;
             if ($mahasiswa->orangTuaMahasiswa()->exists()) {
-                return $this->apiResponse(200, 'success', $mahasiswa->orangTuaMahasiswa);
-            }
-            return $this->apiResponse(200, 'Mahasiswa belum mengisi data orang tua', []);
+                return $this->apiResponseGet(200, 1, [$mahasiswa->orangTuaMahasiswa]);
+			}
+			return response()->json([
+                'status' => 200,
+                'recordsTotal' => 0,
+                'data' => []
+            ]);
         } catch (Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -106,8 +110,7 @@ class MahasiswaController extends Controller
         try {
             $user = Auth::User();
             $mahasiswa = $user->mahasiswa;
-            if ($mahasiswa->orangTuaMahasiswa()->exists()) {
-                $this->validate($request, [
+			$this->validate($request, [
                     'nama_ayah' => 'string',
                     'tempat_lahir_ayah' => 'string',
                     'tanggal_lahir_ayah' => 'date|before:today',
@@ -127,11 +130,19 @@ class MahasiswaController extends Controller
                     'pekerjaan_sambilan_ibu' => 'string',
                     'penghasilan_sambilan_ibu' => 'integer',
                 ]);
+				
+            if ($mahasiswa->orangTuaMahasiswa()->exists()) {
                 $orangTuaMahasiswa = $mahasiswa->orangTuaMahasiswa;
                 $orangTuaMahasiswa->fill($request->all());
                 $orangTuaMahasiswa->save();
                 return $this->apiResponse(200, 'Success', $orangTuaMahasiswa);
-            }
+            } else {
+				$orangTuaMahasiswa = new OrangTuaMahasiswa;
+                $orangTuaMahasiswa->mahasiswa_id = $mahasiswa->id;
+                $orangTuaMahasiswa->fill($request->all());
+                $orangTuaMahasiswa->save();
+                return $this->apiResponse(200, 'Berhasil menambahkan orang tua', $orangTuaMahasiswa);
+			}
             return $this->apiResponse(201, 'Belum menambahkan orangtua', null);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);

@@ -105,8 +105,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 //	});
 //
 	$router->group(['prefix' => 'mahasiswa'], function () use ($router) {
-		$router->put('/update', 'MahasiswaController@update');
-		$router->post('/berkas/store', 'MahasiswaController@storeBerkasWajibMahasiswa');
+		$router->put('/', 'MahasiswaController@update');
+		$router->post('/', 'MahasiswaController@applyBeasiswa');
+		$router->post('/berkas', 'MahasiswaController@storeBerkasWajibMahasiswa');
 
 		$router->group(['prefix' => 'sertifikat'], function () use ($router) {
 			$router->post('/store', 'MahasiswaController@storeSertifikatWajibMahasiswa');
@@ -130,8 +131,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 		});
 
 		$router->group(['prefix' => 'orangtua'], function () use ($router) {
-			$router->post('/store', 'MahasiswaController@storeOrangTua');
-			$router->put('/update', 'MahasiswaController@updateOrangTua');
+			$router->post('/', 'MahasiswaController@storeOrangTua');
+			$router->put('/', 'MahasiswaController@updateOrangTua');
 			$router->get('/', 'MahasiswaController@getOrangTua');
 		});
 
@@ -143,7 +144,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 			$router->get('/', 'MahasiswaController@getSaudara');
 		});
 
-		$router->post('/beasiswa/pendaftaran', 'MahasiswaController@applyBeasiswa');
 
 	});
 //
