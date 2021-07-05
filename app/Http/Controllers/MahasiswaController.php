@@ -56,8 +56,8 @@ class MahasiswaController extends Controller
             $mahasiswa = $user->mahasiswa;
             if ($mahasiswa->orangTuaMahasiswa()->exists()) {
                 return $this->apiResponseGet(200, 1, [$mahasiswa->orangTuaMahasiswa]);
-			}
-			return response()->json([
+            }
+            return response()->json([
                 'status' => 200,
                 'recordsTotal' => 0,
                 'data' => []
@@ -107,42 +107,42 @@ class MahasiswaController extends Controller
 
     public function updateOrangTua(Request $request)
     {
+        // $this->validate($request, [
+        //     'nama_ayah' => 'string',
+        //     'tempat_lahir_ayah' => 'string',
+        //     'tanggal_lahir_ayah' => 'date|before:today',
+        //     'alamat_ayah' => 'string',
+        //     'nomor_hp_ayah' => 'string|max:13',
+        //     'pekerjaan_ayah' => 'string',
+        //     'penghasilan_ayah' => 'integer',
+        //     'pekerjaan_sambilan_ayah' => 'string',
+        //     'penghasilan_sambilan_ayah' => 'integer',
+        //     'nama_ibu' => 'string',
+        //     'tempat_lahir_ibu' => 'string',
+        //     'tanggal_lahir_ibu' => 'date|before:today',
+        //     'alamat_ibu' => 'string',
+        //     'nomor_hp_ibu' => 'string|max:13',
+        //     'pekerjaan_ibu' => 'string',
+        //     'penghasilan_ibu' => 'integer',
+        //     'pekerjaan_sambilan_ibu' => 'string',
+        //     'penghasilan_sambilan_ibu' => 'integer',
+        // ]);
+
+        $user = Auth::User();
+        $mahasiswa = $user->mahasiswa;
         try {
-            $user = Auth::User();
-            $mahasiswa = $user->mahasiswa;
-			$this->validate($request, [
-                    'nama_ayah' => 'string',
-                    'tempat_lahir_ayah' => 'string',
-                    'tanggal_lahir_ayah' => 'date|before:today',
-                    'alamat_ayah' => 'string',
-                    'nomor_hp_ayah' => 'string|max:13',
-                    'pekerjaan_ayah' => 'string',
-                    'penghasilan_ayah' => 'integer',
-                    'pekerjaan_sambilan_ayah' => 'string',
-                    'penghasilan_sambilan_ayah' => 'integer',
-                    'nama_ibu' => 'string',
-                    'tempat_lahir_ibu' => 'string',
-                    'tanggal_lahir_ibu' => 'date|before:today',
-                    'alamat_ibu' => 'string',
-                    'nomor_hp_ibu' => 'string|max:13',
-                    'pekerjaan_ibu' => 'string',
-                    'penghasilan_ibu' => 'integer',
-                    'pekerjaan_sambilan_ibu' => 'string',
-                    'penghasilan_sambilan_ibu' => 'integer',
-                ]);
-				
             if ($mahasiswa->orangTuaMahasiswa()->exists()) {
                 $orangTuaMahasiswa = $mahasiswa->orangTuaMahasiswa;
                 $orangTuaMahasiswa->fill($request->all());
                 $orangTuaMahasiswa->save();
                 return $this->apiResponse(200, 'Success', $orangTuaMahasiswa);
             } else {
-				$orangTuaMahasiswa = new OrangTuaMahasiswa;
+                $orangTuaMahasiswa = new OrangTuaMahasiswa;
                 $orangTuaMahasiswa->mahasiswa_id = $mahasiswa->id;
                 $orangTuaMahasiswa->fill($request->all());
                 $orangTuaMahasiswa->save();
                 return $this->apiResponse(200, 'Berhasil menambahkan orang tua', $orangTuaMahasiswa);
-			}
+            }
             return $this->apiResponse(201, 'Belum menambahkan orangtua', null);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
@@ -255,7 +255,7 @@ class MahasiswaController extends Controller
     {
         if ($mahasiswa->orangTuaMahasiswa()->exists()) {
             $orangTuaMahasiswa = $mahasiswa->orangTuaMahasiswa;
-            return (!is_null($orangTuaMahasiswa->nama_ayah) && !is_null($orangTuaMahasiswa->tempat_lahir_ayah) && !is_null($orangTuaMahasiswa->tanggal_lahir_ayah) && !is_null($orangTuaMahasiswa->alamat_ayah) && !is_null($orangTuaMahasiswa->nomor_hp_ayah) && !is_null($orangTuaMahasiswa->pekerjaan_ayah) && !is_null($orangTuaMahasiswa->penghasilan_ayah) && !is_null($orangTuaMahasiswa->pekerjaan_sambilan_ayah) && !is_null($orangTuaMahasiswa->penghasilan_sambilan_ayah) && !is_null($orangTuaMahasiswa->nama_ibu) && !is_null($orangTuaMahasiswa->tempat_lahir_ibu) && !is_null($orangTuaMahasiswa->tanggal_lahir_ibu) && !is_null($orangTuaMahasiswa->alamat_ibu) && !is_null($orangTuaMahasiswa->nomor_hp_ibu) && !is_null($orangTuaMahasiswa->pekerjaan_ibu) && !is_null($orangTuaMahasiswa->penghasilan_ibu) && !is_null($orangTuaMahasiswa->pekerjaan_sambilan_ibu) && !is_null($orangTuaMahasiswa->penghasilan_sambilan_ibu));
+            return (!is_null($orangTuaMahasiswa->nama_ayah) && !is_null($orangTuaMahasiswa->tempat_lahir_ayah) && !is_null($orangTuaMahasiswa->tanggal_lahir_ayah) && !is_null($orangTuaMahasiswa->alamat_ayah) && !is_null($orangTuaMahasiswa->nomor_hp_ayah) && !is_null($orangTuaMahasiswa->pekerjaan_ayah) && !is_null($orangTuaMahasiswa->penghasilan_ayah) && !is_null($orangTuaMahasiswa->nama_ibu) && !is_null($orangTuaMahasiswa->tempat_lahir_ibu) && !is_null($orangTuaMahasiswa->tanggal_lahir_ibu) && !is_null($orangTuaMahasiswa->alamat_ibu) && !is_null($orangTuaMahasiswa->nomor_hp_ibu) && !is_null($orangTuaMahasiswa->pekerjaan_ibu) && !is_null($orangTuaMahasiswa->penghasilan_ibu));
         }
         return false;
     }
@@ -284,55 +284,55 @@ class MahasiswaController extends Controller
     {
         return ($beasiswa->status_pendaftaran == "Dibuka");
     }
-//
-//    public function getSkorIPK($ipk)
-//    {
-//        $skorIpk = 0;
-//        if ($ipk > 3.75) {
-//            $skorIpk = 4;
-//        } else if ($ipk > 3.5 && $ipk <= 3.75) {
-//            $skorIpk = 3;
-//        } else if ($ipk > 3.25 && $ipk <= 3.5) {
-//            $skorIpk = 2;
-//        } else if ($ipk >= 3.0 && $ipk <= 3.25) {
-//            $skorIpk = 1;
-//        }
-//        return $skorIpk;
-//    }
-//
-//    public function getSkorPenghasilanOrangTua($penghasilanOrangTua)
-//    {
-//        $skorPenghasilanOrangTua = 0;
-//        if ($penghasilanOrangTua <= 1500000) {
-//            $skorPenghasilanOrangTua = 4;
-//        } else if ($penghasilanOrangTua > 1500000 && $penghasilanOrangTua <= 2500000) {
-//            $skorPenghasilanOrangTua = 3;
-//        } else if ($penghasilanOrangTua > 2500000 && $penghasilanOrangTua <= 3500000) {
-//            $skorPenghasilanOrangTua = 2;
-//        } else if ($penghasilanOrangTua > 3500000 && $penghasilanOrangTua <= 5000000) {
-//            $skorPenghasilanOrangTua = 1;
-//        } else if ($penghasilanOrangTua > 5000000) {
-//            $skorPenghasilanOrangTua = 0;
-//        }
-//        return $skorPenghasilanOrangTua;
-//    }
-//
-//    public function getSkorTanggunganOrangTua($tanggunganOrangTua)
-//    {
-//        $skorTanggungan = 0;
-//        if ($tanggunganOrangTua <= 750000) {
-//            $skorTanggungan = 4;
-//        } else if ($tanggunganOrangTua > 750000 && $tanggunganOrangTua <= 1000000) {
-//            $skorTanggungan = 3;
-//        } else if ($tanggunganOrangTua > 1000000 && $tanggunganOrangTua <= 1500000) {
-//            $skorTanggungan = 2;
-//        } else if ($tanggunganOrangTua > 1500000 && $tanggunganOrangTua <= 2000000) {
-//            $skorTanggungan = 1;
-//        } else if ($tanggunganOrangTua > 2000000) {
-//            $skorTanggungan = 0;
-//        }
-//        return $skorTanggungan;
-//    }
+    //
+    //    public function getSkorIPK($ipk)
+    //    {
+    //        $skorIpk = 0;
+    //        if ($ipk > 3.75) {
+    //            $skorIpk = 4;
+    //        } else if ($ipk > 3.5 && $ipk <= 3.75) {
+    //            $skorIpk = 3;
+    //        } else if ($ipk > 3.25 && $ipk <= 3.5) {
+    //            $skorIpk = 2;
+    //        } else if ($ipk >= 3.0 && $ipk <= 3.25) {
+    //            $skorIpk = 1;
+    //        }
+    //        return $skorIpk;
+    //    }
+    //
+    //    public function getSkorPenghasilanOrangTua($penghasilanOrangTua)
+    //    {
+    //        $skorPenghasilanOrangTua = 0;
+    //        if ($penghasilanOrangTua <= 1500000) {
+    //            $skorPenghasilanOrangTua = 4;
+    //        } else if ($penghasilanOrangTua > 1500000 && $penghasilanOrangTua <= 2500000) {
+    //            $skorPenghasilanOrangTua = 3;
+    //        } else if ($penghasilanOrangTua > 2500000 && $penghasilanOrangTua <= 3500000) {
+    //            $skorPenghasilanOrangTua = 2;
+    //        } else if ($penghasilanOrangTua > 3500000 && $penghasilanOrangTua <= 5000000) {
+    //            $skorPenghasilanOrangTua = 1;
+    //        } else if ($penghasilanOrangTua > 5000000) {
+    //            $skorPenghasilanOrangTua = 0;
+    //        }
+    //        return $skorPenghasilanOrangTua;
+    //    }
+    //
+    //    public function getSkorTanggunganOrangTua($tanggunganOrangTua)
+    //    {
+    //        $skorTanggungan = 0;
+    //        if ($tanggunganOrangTua <= 750000) {
+    //            $skorTanggungan = 4;
+    //        } else if ($tanggunganOrangTua > 750000 && $tanggunganOrangTua <= 1000000) {
+    //            $skorTanggungan = 3;
+    //        } else if ($tanggunganOrangTua > 1000000 && $tanggunganOrangTua <= 1500000) {
+    //            $skorTanggungan = 2;
+    //        } else if ($tanggunganOrangTua > 1500000 && $tanggunganOrangTua <= 2000000) {
+    //            $skorTanggungan = 1;
+    //        } else if ($tanggunganOrangTua > 2000000) {
+    //            $skorTanggungan = 0;
+    //        }
+    //        return $skorTanggungan;
+    //    }
 
     public function applyBeasiswa(Request $request)
     {
@@ -386,9 +386,9 @@ class MahasiswaController extends Controller
             $skorIpk = $this->getSkorIPK($mahasiswa->ipk);
             $skorPenghasilanOrangTua = $this->getSkorPenghasilanOrangTua($penghasilanOrangTua);
             $jumlahTanggungan = 1 + $mahasiswa->saudaraMahasiswa()
-                    ->where('status_pernikahan', 'Belum Menikah')
-                    ->where('status_pekerjaan', 'Belum Bekerja')
-                    ->count();
+                ->where('status_pernikahan', 'Belum Menikah')
+                ->where('status_pekerjaan', 'Belum Bekerja')
+                ->count();
             $tanggunganOrangTua = $penghasilanOrangTua / $jumlahTanggungan;
             $skorTanggungan = $this->getSkorTanggunganOrangTua($tanggunganOrangTua);
             $skorKemampuanEkonomi = ($skorPenghasilanOrangTua + $skorTanggungan) / 2;

@@ -143,10 +143,10 @@ class BeasiswaController extends Controller
         ]);
         try {
             $beasiswa = Beasiswa::findOrFail($request->id);
-            Beasiswa::destroy($request->id);
             if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)){
                 $bobot->delete();
             }
+            Beasiswa::destroy($request->id);
             return $this->apiResponse(200, 'Beasiswa berhasil dihapus', $beasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
