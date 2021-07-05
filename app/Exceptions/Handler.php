@@ -54,11 +54,11 @@ class Handler extends ExceptionHandler
 //        if ($exception instanceof GeneralException) {
 //            return response()->json(['message' => $exception->getMessage()], 500);
 //        }
-        if ($exception) {
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ], 500);
-        }
+        // if ($exception) {
+        //     return response()->json([
+        //         'message' => $exception->getMessage(),
+        //     ], 500);
+        // }
 
 
         return parent::render($request, $exception);
