@@ -105,45 +105,44 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 //	});
 //
 	$router->group(['prefix' => 'mahasiswa'], function () use ($router) {
-		$router->put('/update', 'MahasiswaController@update');
-		$router->post('/berkas/store', 'MahasiswaController@storeBerkasWajibMahasiswa');
+		$router->put('/', 'MahasiswaController@update');
+		$router->post('/', 'MahasiswaController@applyBeasiswa');
+		$router->post('/berkas_wajib', 'MahasiswaController@storeBerkasWajibMahasiswa');
+		$router->post('/sertifikat_wajib', 'MahasiswaController@storeSertifikatWajibMahasiswa');
 
 		$router->group(['prefix' => 'sertifikat'], function () use ($router) {
-			$router->post('/store', 'MahasiswaController@storeSertifikatWajibMahasiswa');
-
 			$router->group(['prefix' => 'prestasi'], function () use ($router) {
 				$router->get('/all', 'MahasiswaController@getAllSertifikatPrestasiMahasiswa');
 				$router->get('/', 'MahasiswaController@getSertifikatPrestasiMahasiswa');
-				$router->post('/store', 'MahasiswaController@storeSertifikatPrestasiMahasiswa');
-				$router->post('/update', 'MahasiswaController@updateSertifikatPrestasiMahasiswa');
-				$router->post('/destroy', 'MahasiswaController@destroySertifikatPrestasiMahasiswa');
+				$router->post('/', 'MahasiswaController@storeSertifikatPrestasiMahasiswa');
+				$router->put('/', 'MahasiswaController@updateSertifikatPrestasiMahasiswa');
+				$router->delete('/', 'MahasiswaController@destroySertifikatPrestasiMahasiswa');
 			});
 
 			$router->group(['prefix' => 'organisasi'], function () use ($router) {
 				$router->get('/all', 'MahasiswaController@getAllSertifikatOrganisasiMahasiswa');
 				$router->get('/', 'MahasiswaController@getSertifikatOrganisasiMahasiswa');
-				$router->post('/store', 'MahasiswaController@storeSertifikatOrganisasiMahasiswa');
-				$router->post('/update', 'MahasiswaController@updateSertifikatOrganisasiMahasiswa');
-				$router->post('/destroy', 'MahasiswaController@destroySertifikatOrganisasiMahasiswa');
+				$router->post('/', 'MahasiswaController@storeSertifikatOrganisasiMahasiswa');
+				$router->put('/', 'MahasiswaController@updateSertifikatOrganisasiMahasiswa');
+				$router->delete('/', 'MahasiswaController@destroySertifikatOrganisasiMahasiswa');
 			});
 
 		});
 
 		$router->group(['prefix' => 'orangtua'], function () use ($router) {
-			$router->post('/store', 'MahasiswaController@storeOrangTua');
-			$router->put('/update', 'MahasiswaController@updateOrangTua');
+			$router->post('/', 'MahasiswaController@storeOrangTua');
+			$router->put('/', 'MahasiswaController@updateOrangTua');
 			$router->get('/', 'MahasiswaController@getOrangTua');
 		});
 
 		$router->group(['prefix' => 'saudara'], function () use ($router) {
-			$router->post('/store', 'MahasiswaController@storeSaudara');
-			$router->put('/update', 'MahasiswaController@updateSaudara');
-			$router->post('/destroy', 'MahasiswaController@destroySaudara');
-			$router->get('/all', 'MahasiswaController@getAllSaudara');
+			$router->post('/', 'MahasiswaController@storeSaudara');
+			$router->put('/', 'MahasiswaController@updateSaudara');
+			$router->delete('/', 'MahasiswaController@destroySaudara');
+			//$router->get('/all', 'MahasiswaController@getAllSaudara');
 			$router->get('/', 'MahasiswaController@getSaudara');
 		});
 
-		$router->post('/beasiswa/pendaftaran', 'MahasiswaController@applyBeasiswa');
 
 	});
 //
