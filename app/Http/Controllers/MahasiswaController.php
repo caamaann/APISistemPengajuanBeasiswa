@@ -162,16 +162,35 @@ class MahasiswaController extends Controller
 
     public function getSaudara(Request $request)
     {
-        $this->validate($request, [
-            'saudara_id' => 'required',
-        ]);
+		if (!$request->length){
+            $length = 10;
+        } else {
+            $length = $request->length;
+        }
+        if (!$request->page){
+            $page = 1;
+        } else {
+            $page = $request->page;
+        }
+        if (!$request->search_text){
+            $search_text = "";
+        } else {
+            $search_text = $request->search_text;
+        }
+		
+        $user = Auth::User();
+        $mahasiswa = $user->mahasiswa;
+        
         try {
-            $user = Auth::User();
-            $mahasiswa = $user->mahasiswa;
-            $saudara = SaudaraMahasiswa::where('id', $request->saudara_id)
-                ->where('mahasiswa_id', $mahasiswa->id)
-                ->firstOrFail();
-            return $this->apiResponse(200, 'success', $saudara);
+			if ($request->id) {
+				$saudara = SaudaraMahasiswa::where('id', $request->id)->where('mahasiswa_id', $mahasiswa->id)->get();
+				$count = 1;
+            } else {
+				$query = SaudaraMahasiswa::where('mahasiswa_id', $mahasiswa->id)->where('nama', 'like', '%'.$search_text.'%');
+				$count = $query->count();
+				$saudara = $query->skip(($page-1)*$length)->take($length)->get();
+			}
+            return $this->apiResponseGet(200, $count, $saudara);
         } catch (Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -202,7 +221,7 @@ class MahasiswaController extends Controller
     public function updateSaudara(Request $request)
     {
         $this->validate($request, [
-            'saudara_id' => 'required|integer',
+            'id' => 'required|integer',
             'nama' => 'string',
             'usia' => 'integer|gt:0',
             'status_pernikahan' => 'required|string|in:Menikah,Belum menikah',
@@ -212,7 +231,7 @@ class MahasiswaController extends Controller
         try {
             $user = Auth::User();
             $mahasiswa = $user->mahasiswa;
-            $saudaraMahasiswa = SaudaraMahasiswa::where('id', $request->saudara_id)->where('mahasiswa_id', $mahasiswa->id)->firstOrFail();
+            $saudaraMahasiswa = SaudaraMahasiswa::where('id', $request->id)->where('mahasiswa_id', $mahasiswa->id)->firstOrFail();
             $saudaraMahasiswa->update($request->all());
             return $this->apiResponse(200, 'Saudara mahasiswa berhasil diubah', $saudaraMahasiswa);
         } catch (\Exception $e) {
@@ -402,11 +421,11 @@ class MahasiswaController extends Controller
     public function storeSertifikatWajibMahasiswa(Request $request)
     {
         $this->validate($request, [
-            'sertifikat_ppkk' => 'image',
-            'sertifikat_bn' => 'image',
-            'sertifikat_metagama' => 'image',
-            'sertifikat_butterfly' => 'image',
-            'sertifikat_esq' => 'image',
+            'sertifikat_ppkk' => 'mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
+            'sertifikat_bn' => 'mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
+            'sertifikat_metagama' => 'mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
+            'sertifikat_butterfly' => 'mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
+            'sertifikat_esq' => 'mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
         ]);
         try {
             $user = Auth::User();
@@ -455,7 +474,7 @@ class MahasiswaController extends Controller
                 $mahasiswa->sertifikat_butterfly = $butterflyFileName;
             }
             $mahasiswa->save();
-            return $this->apiResponse(200, 'success', ['mahasiswa' => $mahasiswa]);
+            return $this->apiResponse(200, 'Berkas berhasil ditambahkan', $mahasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -464,9 +483,9 @@ class MahasiswaController extends Controller
     public function storeBerkasWajibMahasiswa(Request $request)
     {
         $this->validate($request, [
-            'file_transkrip_nilai' => 'image',
-            'file_kk' => 'image',
-            'file_ktm' => 'image',
+            'file_transkrip_nilai' => 'mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
+            'file_kk' => 'mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
+            'file_ktm' => 'mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
         ]);
         try {
             $user = Auth::User();
