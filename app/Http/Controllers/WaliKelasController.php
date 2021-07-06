@@ -19,7 +19,7 @@ class WaliKelasController extends Controller
     public function getPendaftarKelas(Request $request)
     {
         $this->validate($request, [
-            'beasiswa_id' => 'required|integer',
+            'beasiswa_id' => 'required',
         ]);
         try {
             $user = Auth::User();
@@ -36,7 +36,7 @@ class WaliKelasController extends Controller
                     array_push($pendaftarKelas, $value);
                 }
             }
-            return $this->apiResponse(200, 'success', ['pendaftar_kelas' => $pendaftarKelas]);
+            return $this->apiResponseGet(200, count($pendaftarKelas), $pendaftarKelas]);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
