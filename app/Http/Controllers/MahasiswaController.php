@@ -256,7 +256,7 @@ class MahasiswaController extends Controller
 
     public function getBeasiswaMahasiswa($mahasiswa)
     {
-        $listStatusPenerimaanBeasiswa = ['Lulus seleksi program studi', 'Lulus seleksi jurusan', 'Menerima beasiswa'];
+        $listStatusPenerimaanBeasiswa = ['Mendaftar', 'Dinilai oleh wali kelas', 'Lulus seleksi program studi', 'Lulus seleksi jurusan', 'Menerima beasiswa'];
         foreach ($mahasiswa->beasiswa as $key => $beasiswa) {
             if (in_array($beasiswa->pivot->status, $listStatusPenerimaanBeasiswa)) {
                 return $beasiswa;
@@ -346,7 +346,7 @@ class MahasiswaController extends Controller
             }
             $beasiswaMahasiswa = $this->getBeasiswaMahasiswa($mahasiswa);
             if ($beasiswaMahasiswa) {
-                return $this->apiResponse(201, 'Sedang menerima beasiswa ' . $beasiswaMahasiswa->nama . ' dengan periode ' . $beasiswaMahasiswa->awal_penerimaan . ' s. d. ' . $beasiswaMahasiswa->akhir_penerimaan, null);
+                return $this->apiResponse(201, 'Sudah Mendaftar Beasiswa', null);
             }
             $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
             if (!$this->validasiWaktuPendaftaranBeasiswa($beasiswa)) {
