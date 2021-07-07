@@ -65,17 +65,17 @@ class AdminController extends Controller
 
     public function getMahasiswa(Request $request)
     {
-        if (!$request->length){
+        if (!$request->length) {
             $length = 10;
         } else {
             $length = $request->length;
         }
-        if (!$request->page){
+        if (!$request->page) {
             $page = 1;
         } else {
             $page = $request->page;
         }
-        if (!$request->search_text){
+        if (!$request->search_text) {
             $search_text = "";
         } else {
             $search_text = $request->search_text;
@@ -86,8 +86,8 @@ class AdminController extends Controller
                 $mahasiswa = Mahasiswa::where('id', $request->id)->with('user', 'waliKelas', 'programStudi')->get();
                 $count = 1;
             } else {
-                $query = Mahasiswa::select('mahasiswa.*', 'program_studi.jurusan_id')->where('mahasiswa.nama', 'like', '%'.$search_text.'%');
-                $query->leftJoin('program_studi','mahasiswa.program_studi_id','=','program_studi.id');
+                $query = Mahasiswa::select('mahasiswa.*', 'program_studi.jurusan_id')->where('mahasiswa.nama', 'like', '%' . $search_text . '%');
+                $query->leftJoin('program_studi', 'mahasiswa.program_studi_id', '=', 'program_studi.id');
                 if ($request->jurusan_id) {
                     $query->where('program_studi.jurusan_id', $request->jurusan_id);
                 }
@@ -101,11 +101,11 @@ class AdminController extends Controller
                     $query->where('wali_kelas_id', $request->wali_kelas_id);
                 }
                 $count = $query->count();
-                $mahasiswa = $query->skip(($page-1)*$length)->take($length)->with('user', 'waliKelas', 'programStudi')->get();
-				foreach($mahasiswa as $value){
-					$jurusan = Jurusan::where('id', $value->jurusan_id)->get();
-					$value->jurusan = $jurusan[0];
-				}
+                $mahasiswa = $query->skip(($page - 1) * $length)->take($length)->with('user', 'waliKelas', 'programStudi')->get();
+                foreach ($mahasiswa as $value) {
+                    $jurusan = Jurusan::where('id', $value->jurusan_id)->get();
+                    $value->jurusan = $jurusan[0];
+                }
             }
 
             return $this->apiResponseGet(200, $count, $mahasiswa);
@@ -220,17 +220,17 @@ class AdminController extends Controller
 
     public function getWaliKelas(Request $request)
     {
-        if (!$request->length){
+        if (!$request->length) {
             $length = 10;
         } else {
             $length = $request->length;
         }
-        if (!$request->page){
+        if (!$request->page) {
             $page = 1;
         } else {
             $page = $request->page;
         }
-        if (!$request->search_text){
+        if (!$request->search_text) {
             $search_text = "";
         } else {
             $search_text = $request->search_text;
@@ -241,12 +241,12 @@ class AdminController extends Controller
                 $wali_kelas = WaliKelas::where('id', $request->id)->with('user', 'jurusan')->get();
                 $count = 1;
             } else {
-                $query = WaliKelas::where('nama', 'like', '%'.$search_text.'%');
+                $query = WaliKelas::where('nama', 'like', '%' . $search_text . '%');
                 if ($request->jurusan_id) {
                     $query->where('jurusan_id', $request->jurusan_id);
                 }
                 $count = $query->count();
-                $wali_kelas = $query->skip(($page-1)*$length)->take($length)->with('user', 'jurusan')->get();
+                $wali_kelas = $query->skip(($page - 1) * $length)->take($length)->with('user', 'jurusan')->get();
             }
 
             return $this->apiResponseGet(200, $count, $wali_kelas);
@@ -341,17 +341,17 @@ class AdminController extends Controller
 
     public function getKetuaProgramStudi(Request $request)
     {
-        if (!$request->length){
+        if (!$request->length) {
             $length = 10;
         } else {
             $length = $request->length;
         }
-        if (!$request->page){
+        if (!$request->page) {
             $page = 1;
         } else {
             $page = $request->page;
         }
-        if (!$request->search_text){
+        if (!$request->search_text) {
             $search_text = "";
         } else {
             $search_text = $request->search_text;
@@ -362,8 +362,8 @@ class AdminController extends Controller
                 $ketua_prodi = KetuaProgramStudi::where('id', $request->id)->with('user', 'programStudi')->get();
                 $count = 1;
             } else {
-                $query = KetuaProgramStudi::select('ketua_program_studi.*', 'program_studi.jurusan_id')->where('ketua_program_studi.nama', 'like', '%'.$search_text.'%');
-                $query->leftJoin('program_studi','ketua_program_studi.program_studi_id','=','program_studi.id');
+                $query = KetuaProgramStudi::select('ketua_program_studi.*', 'program_studi.jurusan_id')->where('ketua_program_studi.nama', 'like', '%' . $search_text . '%');
+                $query->leftJoin('program_studi', 'ketua_program_studi.program_studi_id', '=', 'program_studi.id');
                 if ($request->program_studi_id) {
                     $query->where('program_studi_id', $request->program_studi_id);
                 }
@@ -371,11 +371,11 @@ class AdminController extends Controller
                     $query->where('program_studi.jurusan_id', $request->jurusan_id);
                 }
                 $count = $query->count();
-                $ketua_prodi = $query->skip(($page-1)*$length)->take($length)->with('user', 'programStudi')->get();
-				foreach($ketua_prodi as $value){
-					$jurusan = Jurusan::where('id', $value->jurusan_id)->get();
-					$value->jurusan = $jurusan[0];
-				}
+                $ketua_prodi = $query->skip(($page - 1) * $length)->take($length)->with('user', 'programStudi')->get();
+                foreach ($ketua_prodi as $value) {
+                    $jurusan = Jurusan::where('id', $value->jurusan_id)->get();
+                    $value->jurusan = $jurusan[0];
+                }
             }
 
             return $this->apiResponseGet(200, $count, $ketua_prodi);
@@ -471,17 +471,17 @@ class AdminController extends Controller
 
     public function getKetuaJurusan(Request $request)
     {
-        if (!$request->length){
+        if (!$request->length) {
             $length = 10;
         } else {
             $length = $request->length;
         }
-        if (!$request->page){
+        if (!$request->page) {
             $page = 1;
         } else {
             $page = $request->page;
         }
-        if (!$request->search_text){
+        if (!$request->search_text) {
             $search_text = "";
         } else {
             $search_text = $request->search_text;
@@ -492,12 +492,12 @@ class AdminController extends Controller
                 $ketua_jurusan = KetuaJurusan::where('id', $request->id)->with('user', 'jurusan')->get();
                 $count = 1;
             } else {
-                $query = KetuaJurusan::where('nama', 'like', '%'.$search_text.'%');
+                $query = KetuaJurusan::where('nama', 'like', '%' . $search_text . '%');
                 if ($request->jurusan_id) {
                     $query->where('jurusan_id', $request->jurusan_id);
                 }
                 $count = $query->count();
-                $ketua_jurusan = $query->skip(($page-1)*$length)->take($length)->with('user', 'jurusan')->get();
+                $ketua_jurusan = $query->skip(($page - 1) * $length)->take($length)->with('user', 'jurusan')->get();
             }
 
             return $this->apiResponseGet(200, $count, $ketua_jurusan);
@@ -593,17 +593,17 @@ class AdminController extends Controller
 
     public function getPembantuDirektur3(Request $request)
     {
-        if (!$request->length){
+        if (!$request->length) {
             $length = 10;
         } else {
             $length = $request->length;
         }
-        if (!$request->page){
+        if (!$request->page) {
             $page = 1;
         } else {
             $page = $request->page;
         }
-        if (!$request->search_text){
+        if (!$request->search_text) {
             $search_text = "";
         } else {
             $search_text = $request->search_text;
@@ -614,10 +614,10 @@ class AdminController extends Controller
                 $pd3 = array(PembantuDirektur3::where('id', $request->id)->with('user')->get());
                 $count = 1;
             } else {
-                $query = PembantuDirektur3::where('nama', 'like', '%'.$search_text.'%');
+                $query = PembantuDirektur3::where('nama', 'like', '%' . $search_text . '%');
 
                 $count = $query->count();
-                $pd3 = $query->skip(($page-1)*$length)->take($length)->with('user')->get();
+                $pd3 = $query->skip(($page - 1) * $length)->take($length)->with('user')->get();
             }
 
             return $this->apiResponseGet(200, $count, $pd3);

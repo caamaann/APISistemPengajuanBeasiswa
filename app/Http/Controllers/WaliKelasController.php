@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\PerbandinganAlternatif;
+use App\PerbandinganKriteria;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Beasiswa;
 use App\Mahasiswa;
@@ -45,32 +48,55 @@ class WaliKelasController extends Controller
     public function updateNilaiKelayakan(Request $request)
     {
         $this->validate($request, [
-            'beasiswa_id' => 'required|integer',
-            'nim' => 'required|integer',
-            'skor_prestasi' => 'required|integer|gte:0',
-            'skor_perilaku' => 'required|integer|gte:0|lte:4',
-            'skor_organisasi' => 'required|integer|gte:0',
+            'beasiswa_id' => 'required',
+            'pembobotan' => 'required',
+            'kriteria' => 'required',
+            'mahasiswa_ids' => 'required',
         ]);
         try {
             $user = Auth::User();
             $waliKelasId = $user->waliKelas->id;
-            $mahasiswa = Mahasiswa::where('nim', $request->nim)->firstOrFail();
-            $beasiswa = Beasiswa::findOrFail('beasiswa_id');
-            if ($mahasiswa->wali_kelas_id == $waliKelasId) {
-                $pendaftaranMahasiswa = $mahasiswa->beasiswa()->wherePivot('beasiswa_id', $request->beasiswa_id)->where('status', 'Mendaftar')->firstOrFail();
-                $pendaftaranMahasiswa->pivot->skor_prestasi = $request->skor_prestasi;
-                $pendaftaranMahasiswa->pivot->skor_perilaku = $request->skor_perilaku;
-                $pendaftaranMahasiswa->pivot->skor_organisasi = $request->skor_organisasi;
-                $pendaftaranMahasiswa->pivot->skor_akhir = $pendaftaranMahasiswa->pivot->skor_ipk * $beasiswa->bobot_ipk / 100 +
-                    $pendaftaranMahasiswa->pivot->skor_prestasi * $beasiswa->bobot_prestasi / 100 +
-                    $pendaftaranMahasiswa->pivot->skor_perilaku * $beasiswa->bobot_perilaku / 100 +
-                    $pendaftaranMahasiswa->pivot->skor_organisasi * $beasiswa->bobot_organisasi / 100 +
-                    $pendaftaranMahasiswa->pivot->skor_kemampuan_ekonomi * $beasiswa->bobot_kemampuan_ekonomi / 100;
+            $pembobotanAlternatif = $request->pembobotan;
+            $totalKriteria = count($request->kriteria);
+            $totalAlternatif = count($request->mahasiswa_ids);
+            $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
+            $pembobotanKriteria = PerbandinganKriteria::where('beasiswa_id', $request->beasiswa_id)->get();
+            $eigenKriteria = $this->getEigenValueForAHP($pembobotanKriteria, $totalKriteria);
+            $arrEigenAlternatif[] = null;
+            $count = 0;
+            foreach ($pembobotanAlternatif as $index => $value) {
+                $arrEigenAlternatif[$count] = $this->getEigenValueForAHP($value, $totalAlternatif);
+                $count++;
+            }
+
+            foreach ($request->mahasiswa_ids as $key => $value) {
+                $skor_akhir = 0;
+                for ($i = 0; $i < $totalKriteria; $i++) {
+                    $skor_akhir += $arrEigenAlternatif[$i][$key][0] * $eigenKriteria[$i][0];
+                }
+                $mahasiswa = Mahasiswa::where('id', $value)->firstOrFail();
+                $pendaftaranMahasiswa = $mahasiswa->beasiswa()->wherePivot('beasiswa_id', $request->beasiswa_id)->where('status', 'Mendaftar')->first();
+                if (!$pendaftaranMahasiswa){
+                    return $this->apiResponse(200, 'Penilaian sudah dilakukan', null);
+                }
+                $pendaftaranMahasiswa->pivot->skor_akhir = $skor_akhir;
                 $pendaftaranMahasiswa->pivot->status = "Dinilai oleh wali kelas";
                 $pendaftaranMahasiswa->pivot->save();
-                return $this->apiResponse(200, 'success', ['hasil_penilaian' => $pendaftaranMahasiswa->pivot]);
             }
-            return $this->apiResponse(201, 'Bukan mahasiswa yang diampu wali kelas', null);
+
+            foreach ($pembobotanAlternatif as $index => $value) {
+                foreach ($value as $item) {
+                    $perbandingan_alternatif = new PerbandinganAlternatif;
+                    $perbandingan_alternatif->beasiswa_id = $request->beasiswa_id;
+                    $perbandingan_alternatif->kriteria_id = $request->kriteria[$index];
+                    $perbandingan_alternatif->mahasiswa_id_1 = $item['mahasiswa_id_1'];
+                    $perbandingan_alternatif->bobot_1 = $item['bobot_1'];
+                    $perbandingan_alternatif->mahasiswa_id_2 = $item['mahasiswa_id_2'];
+                    $perbandingan_alternatif->bobot_2 = $item['bobot_2'];
+                    $perbandingan_alternatif->save();
+                }
+            }
+            return $this->apiResponse(200, 'Berhasil menambahkan penilaian', "Berhasil");
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }

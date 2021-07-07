@@ -54,9 +54,9 @@ class GeneralException extends Exception
     private function handleAjax()
     {
         return response()->json([
-            'error'   => true,
+            'error' => true,
             'message' => $this->getMessage(),
-            'data'    => $this->data
+            'data' => $this->data
         ], $this->status);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mahasiswa;
 use App\PerbandinganKriteria;
 use App\PendaftarBeasiswa;
 use Illuminate\Database\Eloquent\Model;
@@ -32,23 +33,23 @@ class BeasiswaController extends Controller
         } else {
             $search_text = $request->search_text;
         }
-		
-		$user = Auth::User();
+
+        $user = Auth::User();
         try {
             if ($request->id) {
                 $beasiswa = array(Beasiswa::findOrFail($request->id));
                 $beasiswa[0]->programStudi;
                 $pembobotan = PerbandinganKriteria::where('beasiswa_id', $request->id)->get();
                 $beasiswa[0]->pembobotan = $pembobotan;
-				if($mahasiswa = $user->mahasiswa){
-				$hasBeasiswa = PendaftarBeasiswa::where('mahasiswa_id', $mahasiswa->id)->where('beasiswa_id', $request->id)->get();		
-				if (count($hasBeasiswa) > 0){
-					$beasiswa[0]->status = 1;
-				} else {
-					$beasiswa[0]->status = 0;
-				}
-				}
-				
+                if ($mahasiswa = $user->mahasiswa) {
+                    $hasBeasiswa = PendaftarBeasiswa::where('mahasiswa_id', $mahasiswa->id)->where('beasiswa_id', $request->id)->get();
+                    if (count($hasBeasiswa) > 0) {
+                        $beasiswa[0]->status = 1;
+                    } else {
+                        $beasiswa[0]->status = 0;
+                    }
+                }
+
                 $count = 1;
             } else {
                 $query = Beasiswa::where('nama', 'like', '%' . $search_text . '%');
@@ -60,17 +61,33 @@ class BeasiswaController extends Controller
 
                 $count = $query->count();
                 $beasiswa = $query->skip(($page - 1) * $length)->take($length)->get();
-				
-				if($mahasiswa = $user->mahasiswa){
-					foreach($beasiswa as $value){
-						$hasBeasiswa = PendaftarBeasiswa::where('mahasiswa_id', $mahasiswa->id)->where('beasiswa_id', $value->id)->get();		
-						if (count($hasBeasiswa) > 0){
-							$value->status = 1;
-						} else {
-							$value->status = 0;
-						}
-					}
-				}
+
+                if ($mahasiswa = $user->mahasiswa) {
+                    foreach ($beasiswa as $value) {
+                        $hasBeasiswa = PendaftarBeasiswa::where('mahasiswa_id', $mahasiswa->id)->where('beasiswa_id', $value->id)->get();
+                        if (count($hasBeasiswa) > 0) {
+                            $value->status = 1;
+                        } else {
+                            $value->status = 0;
+                        }
+                    }
+                }
+                if ($wali_kelas = $user->waliKelas) {
+                    foreach ($beasiswa as $value) {
+                        $query = PendaftarBeasiswa::select('pendaftar_beasiswa.*', 'mahasiswa.wali_kelas_id')
+                            ->leftJoin('mahasiswa', 'pendaftar_beasiswa.mahasiswa_id', '=', 'mahasiswa.id')
+                            ->where('pendaftar_beasiswa.beasiswa_id', $value->id)
+                            ->where('mahasiswa.wali_kelas_id', $wali_kelas->id);
+                        $value->total_pendaftar = $query->count();
+                        $sudahDinilai = $query->where('pendaftar_beasiswa.status','!=','Mendaftar')->get();
+                        if (count($sudahDinilai) > 0) {
+                            $value->status = 1;
+                        } else {
+                            $value->status = 0;
+                        }
+                    }
+                }
+
             }
             return $this->apiResponseGet(200, $count, $beasiswa);
         } catch (\Exception $e) {
@@ -89,17 +106,20 @@ class BeasiswaController extends Controller
             'akhir_penerimaan' => 'required|date|after:awal_pendaftaran|after:akhir_pendaftaran|after:awal_penerimaan',
             'penghasilan_orang_tua_maksimal' => 'required',
             'ipk_minimal' => 'required',
+            'pembobotan' => 'required',
+            'total_kriteria' => 'required',
         ]);
 
         try {
             $pembobotan = $request->pembobotan;
-            $cr = $this->getCRforAHP($pembobotan);
-            if ($cr >= 0.1){
+            $total_kriteria = $request->total_kriteria;
+            $cr = $this->getCRforAHP($pembobotan, $total_kriteria);
+            if ($cr >= 0.1) {
                 return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
             }
 
             $beasiswa = Beasiswa::create($request->all());
-            foreach ($pembobotan as $item){
+            foreach ($pembobotan as $item) {
                 $perbandingan_kriteria = new PerbandinganKriteria;
                 $perbandingan_kriteria->beasiswa_id = $beasiswa->id;
                 $perbandingan_kriteria->kriteria_1 = $item['kriteria_1'];
@@ -127,21 +147,24 @@ class BeasiswaController extends Controller
             'akhir_penerimaan' => 'date|after:awal_pendaftaran|after:akhir_pendaftaran|after:awal_penerimaan',
             'penghasilan_orang_tua_maksimal' => 'required',
             'ipk_minimal' => 'required',
+            'pembobotan' => 'required',
+            'total_kriteria' => 'required',
         ]);
         try {
             $beasiswa = Beasiswa::findOrFail($request->id);
             $pembobotan = $request->pembobotan;
-            $cr = $this->getCRforAHP($pembobotan);
-            if ($cr >= 0.1){
+            $total_kriteria = $request->total_kriteria;
+            $cr = $this->getCRforAHP($pembobotan, $total_kriteria);
+            if ($cr >= 0.1) {
                 return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
             }
 
             $beasiswa->update($request->all());
-            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)){
+            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)) {
                 $bobot->delete();
             }
 
-            foreach ($pembobotan as $item){
+            foreach ($pembobotan as $item) {
                 $perbandingan_kriteria = new PerbandinganKriteria;
                 $perbandingan_kriteria->beasiswa_id = $beasiswa->id;
                 $perbandingan_kriteria->kriteria_1 = $item['kriteria_1'];
@@ -164,7 +187,7 @@ class BeasiswaController extends Controller
         ]);
         try {
             $beasiswa = Beasiswa::findOrFail($request->id);
-            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)){
+            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)) {
                 $bobot->delete();
             }
             Beasiswa::destroy($request->id);

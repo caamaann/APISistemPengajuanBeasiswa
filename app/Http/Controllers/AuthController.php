@@ -62,10 +62,10 @@ class AuthController extends Controller
             $user = User::where('username', $request->username)->firstOrFail();
             $user->profile = $this->getUserProfile($user);
             $roles = $this->getUserRole($user);
-			$user->role_code = $roles[0]->name;
-			$user->role_name = $roles[0]->display_name;
+            $user->role_code = $roles[0]->name;
+            $user->role_name = $roles[0]->display_name;
             $user->token = 'Bearer ' . $token;
-			unset($user->roles);
+            unset($user->roles);
 
             return $this->apiResponse(200, 'Authentication success', $user);
         } catch (\Exception $e) {
@@ -83,10 +83,10 @@ class AuthController extends Controller
 
         try {
             $currentPassword = Auth::user()->getAuthPassword();
-            if (!app('hash')->check($request->old_password, $currentPassword)){
+            if (!app('hash')->check($request->old_password, $currentPassword)) {
                 return $this->apiResponse(500, 'Password lama salah', null);
             }
-            if (!Str::is($request->new_password, $request->confirm_password)){
+            if (!Str::is($request->new_password, $request->confirm_password)) {
                 return $this->apiResponse(500, 'Konfirmasi password baru tidak sama dengan password baru', null);
             }
             $user = User::where('username', Auth::user()->username)->firstOrFail();

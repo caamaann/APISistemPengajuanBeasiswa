@@ -16,21 +16,21 @@ class JurusanController extends Controller
 
     public function get(Request $request)
     {
-		if (!$request->length){
-			$length = 10;
-		} else {
-			$length = $request->length;
-		}
-		if (!$request->page){
-			$page = 1;
-		} else {
-			$page = $request->page;
-		}
-		if (!$request->search_text){
-			$search_text = "";
-		} else {
-			$search_text = $request->search_text;
-		}
+        if (!$request->length) {
+            $length = 10;
+        } else {
+            $length = $request->length;
+        }
+        if (!$request->page) {
+            $page = 1;
+        } else {
+            $page = $request->page;
+        }
+        if (!$request->search_text) {
+            $search_text = "";
+        } else {
+            $search_text = $request->search_text;
+        }
 
         try {
             if ($request->id) {
@@ -38,11 +38,11 @@ class JurusanController extends Controller
                 $jurusan[0]->program_studi = ProgramStudi::where('jurusan_id', $request->id)->get();
                 $count = 1;
             } else {
-                $query = Jurusan::where('nama', 'like', '%'.$search_text.'%');
+                $query = Jurusan::where('nama', 'like', '%' . $search_text . '%');
 
                 $count = $query->count();
-                $jurusan = $query->skip(($page-1)*$length)->take($length)->get();
-                foreach ($jurusan as $value){
+                $jurusan = $query->skip(($page - 1) * $length)->take($length)->get();
+                foreach ($jurusan as $value) {
                     $value->program_studi = ProgramStudi::where('jurusan_id', $value->id)->get();
                 }
             }

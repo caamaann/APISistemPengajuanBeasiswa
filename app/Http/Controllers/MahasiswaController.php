@@ -162,34 +162,34 @@ class MahasiswaController extends Controller
 
     public function getSaudara(Request $request)
     {
-		if (!$request->length){
+        if (!$request->length) {
             $length = 10;
         } else {
             $length = $request->length;
         }
-        if (!$request->page){
+        if (!$request->page) {
             $page = 1;
         } else {
             $page = $request->page;
         }
-        if (!$request->search_text){
+        if (!$request->search_text) {
             $search_text = "";
         } else {
             $search_text = $request->search_text;
         }
-		
+
         $user = Auth::User();
         $mahasiswa = $user->mahasiswa;
-        
+
         try {
-			if ($request->id) {
-				$saudara = SaudaraMahasiswa::where('id', $request->id)->where('mahasiswa_id', $mahasiswa->id)->get();
-				$count = 1;
+            if ($request->id) {
+                $saudara = SaudaraMahasiswa::where('id', $request->id)->where('mahasiswa_id', $mahasiswa->id)->get();
+                $count = 1;
             } else {
-				$query = SaudaraMahasiswa::where('mahasiswa_id', $mahasiswa->id)->where('nama', 'like', '%'.$search_text.'%');
-				$count = $query->count();
-				$saudara = $query->skip(($page-1)*$length)->take($length)->get();
-			}
+                $query = SaudaraMahasiswa::where('mahasiswa_id', $mahasiswa->id)->where('nama', 'like', '%' . $search_text . '%');
+                $count = $query->count();
+                $saudara = $query->skip(($page - 1) * $length)->take($length)->get();
+            }
             return $this->apiResponseGet(200, $count, $saudara);
         } catch (Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
@@ -408,9 +408,9 @@ class MahasiswaController extends Controller
 //                ->where('status_pernikahan', 'Belum Menikah')
 //                ->where('status_pekerjaan', 'Belum Bekerja')
 //                ->count();
-  //          $tanggunganOrangTua = $penghasilanOrangTua / $jumlahTanggungan;
-    //        $skorTanggungan = $this->getSkorTanggunganOrangTua($tanggunganOrangTua);
-      //      $skorKemampuanEkonomi = ($skorPenghasilanOrangTua + $skorTanggungan) / 2;
+            //          $tanggunganOrangTua = $penghasilanOrangTua / $jumlahTanggungan;
+            //        $skorTanggungan = $this->getSkorTanggunganOrangTua($tanggunganOrangTua);
+            //      $skorKemampuanEkonomi = ($skorPenghasilanOrangTua + $skorTanggungan) / 2;
             $mahasiswa->beasiswa()->attach($beasiswa->id,);
             return $this->apiResponse(200, 'Berhasil mendaftar beasiswa', $mahasiswa);
         } catch (\Exception $e) {
@@ -535,17 +535,17 @@ class MahasiswaController extends Controller
 
     public function getSertifikatPrestasiMahasiswa(Request $request)
     {
-        if (!$request->length){
+        if (!$request->length) {
             $length = 10;
         } else {
             $length = $request->length;
         }
-        if (!$request->page){
+        if (!$request->page) {
             $page = 1;
         } else {
             $page = $request->page;
         }
-        if (!$request->search_text){
+        if (!$request->search_text) {
             $search_text = "";
         } else {
             $search_text = $request->search_text;
@@ -553,14 +553,14 @@ class MahasiswaController extends Controller
         try {
             $user = Auth::User();
             $mahasiswa = $user->mahasiswa;
-			if ($request->id) {
-				$sertifikat = SertifikatPrestasi::where('id', $request->id)->where('mahasiswa_id', $mahasiswa->id)->get();
+            if ($request->id) {
+                $sertifikat = SertifikatPrestasi::where('id', $request->id)->where('mahasiswa_id', $mahasiswa->id)->get();
                 $count = 1;
             } else {
                 $query = SertifikatPrestasi::where('mahasiswa_id', $mahasiswa->id);
 
                 $count = $query->count();
-                $sertifikat = $query->skip(($page-1)*$length)->take($length)->get();
+                $sertifikat = $query->skip(($page - 1) * $length)->take($length)->get();
             }
 
             return $this->apiResponseGet(200, $count, $sertifikat);
@@ -610,8 +610,8 @@ class MahasiswaController extends Controller
                 $request->file_sertifikat->move(('sertifikat_prestasi'), $filename);
                 $sertifikatPrestasi->file_sertifikat = $filename;
             }
-			$sertifikatPrestasi->tingkat_prestasi = $request->tingkat_prestasi;
-			$sertifikatPrestasi->save();
+            $sertifikatPrestasi->tingkat_prestasi = $request->tingkat_prestasi;
+            $sertifikatPrestasi->save();
             return $this->apiResponse(200, 'Berhasil mengubah sertifikat prestasi', $sertifikatPrestasi);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
@@ -646,17 +646,17 @@ class MahasiswaController extends Controller
 
     public function getSertifikatOrganisasiMahasiswa(Request $request)
     {
-        if (!$request->length){
+        if (!$request->length) {
             $length = 10;
         } else {
             $length = $request->length;
         }
-        if (!$request->page){
+        if (!$request->page) {
             $page = 1;
         } else {
             $page = $request->page;
         }
-        if (!$request->search_text){
+        if (!$request->search_text) {
             $search_text = "";
         } else {
             $search_text = $request->search_text;
@@ -664,14 +664,14 @@ class MahasiswaController extends Controller
         try {
             $user = Auth::User();
             $mahasiswa = $user->mahasiswa;
-			if ($request->id) {
-				$sertifikat = SertifikatOrganisasi::where('id', $request->id)->where('mahasiswa_id', $mahasiswa->id)->get();
+            if ($request->id) {
+                $sertifikat = SertifikatOrganisasi::where('id', $request->id)->where('mahasiswa_id', $mahasiswa->id)->get();
                 $count = 1;
             } else {
                 $query = SertifikatOrganisasi::where('mahasiswa_id', $mahasiswa->id);
 
                 $count = $query->count();
-                $sertifikat = $query->skip(($page-1)*$length)->take($length)->get();
+                $sertifikat = $query->skip(($page - 1) * $length)->take($length)->get();
             }
 
             return $this->apiResponseGet(200, $count, $sertifikat);
@@ -708,7 +708,7 @@ class MahasiswaController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',
-    //        'file_sertifikat' => 'required|mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
+            //        'file_sertifikat' => 'required|mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
             'jenis' => 'required|string|in:Pengurus Organisasi,Kepanitiaan Program Kerja Kemahasiswaan',
         ]);
         try {
@@ -721,8 +721,8 @@ class MahasiswaController extends Controller
                 $request->file_sertifikat->move(('sertifikat_organisasi'), $filename);
                 $sertifikatOrganisasi->file_sertifikat = $filename;
             }
-			$sertifikatOrganisasi->jenis = $request->jenis;
-			$sertifikatOrganisasi->save();
+            $sertifikatOrganisasi->jenis = $request->jenis;
+            $sertifikatOrganisasi->save();
             return $this->apiResponse(200, 'Berhasil mengubah sertifikat organisasi', $sertifikatOrganisasi);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);

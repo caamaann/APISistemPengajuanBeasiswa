@@ -11,7 +11,7 @@ class Controller extends BaseController
 {
     public function apiResponseGet($status, $records_total = 0, $data = null)
     {
-        if ($data) {
+        if ($data || empty($data)) {
             return response()->json([
                 'status' => $status,
                 'recordsTotal' => $records_total,
@@ -79,12 +79,41 @@ class Controller extends BaseController
             return $e->getMessage();
         }
     }
+    public function getEigenValueForAHP($pembobotan, $total){
+        try {
+            $length_pembobotan = $total;
+            if ($length_pembobotan < 3) {
+                return 0.0001;
+            }
 
-    public function getCRforAHP($pembobotan)
+            $matrix_perbandingan = $this->getMatrixPerbandingan($pembobotan, $length_pembobotan);
+            $matrix_perbandingan_for_normalisasi = $matrix_perbandingan;
+            // matrix perbandingan ditambahkan total tiap kolom
+            $sum[] = null;
+            for ($i = 0; $i < $length_pembobotan; $i++) {
+                $temp2 = 0;
+                for ($j = 0; $j < $length_pembobotan; $j++) {
+                    $temp2 += $matrix_perbandingan_for_normalisasi[$j][$i];
+                }
+                $sum[$i] = $temp2;
+            }
+
+            array_push($matrix_perbandingan_for_normalisasi, $sum);
+
+            $matrix_normalisasi = $this->getMatrixNormalisasi($matrix_perbandingan_for_normalisasi, $length_pembobotan);
+//            $eigen_value = $this->getEigenValue($matrix_normalisasi, $length_pembobotan);
+
+            return $this->getEigenValue($matrix_normalisasi, $length_pembobotan);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function getCRforAHP($pembobotan, $total)
     {
         try {
-            $length_pembobotan = count($pembobotan);
-            if ($length_pembobotan < 3){
+            $length_pembobotan = $total;
+            if ($length_pembobotan < 3) {
                 return 0.0001;
             }
 
@@ -106,12 +135,12 @@ class Controller extends BaseController
             $eigen_value = $this->getEigenValue($matrix_normalisasi, $length_pembobotan);
             $weighted_sum_vector = $this->M_mult($matrix_perbandingan, $eigen_value);
             $eigen_max = $this->getEigenMaks($weighted_sum_vector, $eigen_value);
-            $consistency_index = ($eigen_max-$length_pembobotan)/($length_pembobotan -1);
+            $consistency_index = ($eigen_max - $length_pembobotan) / ($length_pembobotan - 1);
             $random_index = $this->getRandomIndex($length_pembobotan);
 
-//            $consistency_ratio = $consistency_index/$random_index;
+            //            $consistency_ratio = $consistency_index/$random_index;
 
-            return $consistency_index/$random_index;
+            return $consistency_index / $random_index;
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -181,10 +210,10 @@ class Controller extends BaseController
         try {
             $length = count($weighted_sum_vector);
             for ($i = 0; $i < $length; $i++) {
-                $temp[$i] = $weighted_sum_vector[$i][0]/ $eigen_value[$i][0];
+                $temp[$i] = $weighted_sum_vector[$i][0] / $eigen_value[$i][0];
             }
 
-            $eigen_max = array_sum($temp)/count($temp);;
+            $eigen_max = array_sum($temp) / count($temp);;
 
             return $eigen_max;
         } catch (Exception $e) {
@@ -225,9 +254,10 @@ class Controller extends BaseController
         }
     }
 
-    public function getRandomIndex($length_matrix){
+    public function getRandomIndex($length_matrix)
+    {
         try {
-            switch($length_matrix){
+            switch ($length_matrix) {
                 case 1:
                     return RANDOM_INDEX_1;
                 case 2:
@@ -248,6 +278,45 @@ class Controller extends BaseController
                     return RANDOM_INDEX_9;
                 case 10:
                     return RANDOM_INDEX_10;
+                default:
+                    return null;
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function getTotalFromPembobotan($pembobotan){
+        try {
+            switch ($pembobotan) {
+                case 1:
+                    return 2;
+                case 3:
+                    return 3;
+                case 6:
+                    return 4;
+                case 10:
+                    return 5;
+                case 15:
+                    return 6;
+                case 21:
+                    return 7;
+                case 28:
+                    return 8;
+                case 36:
+                    return 9;
+                case 45:
+                    return 10;
+                case 55:
+                    return 11;
+                case 66:
+                    return 12;
+                case 78:
+                    return 13;
+                case 91:
+                    return 14;
+                case 105:
+                    return 15;
                 default:
                     return null;
             }

@@ -32,23 +32,23 @@ class AHPController extends Controller
         } else {
             $search_text = $request->search_text;
         }
-		
-		$user = Auth::User();
+
+        $user = Auth::User();
         try {
             if ($request->id) {
                 $beasiswa = array(Beasiswa::findOrFail($request->id));
                 $beasiswa[0]->programStudi;
                 $pembobotan = PerbandinganKriteria::where('beasiswa_id', $request->id)->get();
                 $beasiswa[0]->pembobotan = $pembobotan;
-				if($mahasiswa = $user->mahasiswa){
-				$hasBeasiswa = PendaftarBeasiswa::where('mahasiswa_id', $mahasiswa->id)->where('beasiswa_id', $request->id)->get();		
-				if (count($hasBeasiswa) > 0){
-					$beasiswa[0]->status = 1;
-				} else {
-					$beasiswa[0]->status = 0;
-				}
-				}
-				
+                if ($mahasiswa = $user->mahasiswa) {
+                    $hasBeasiswa = PendaftarBeasiswa::where('mahasiswa_id', $mahasiswa->id)->where('beasiswa_id', $request->id)->get();
+                    if (count($hasBeasiswa) > 0) {
+                        $beasiswa[0]->status = 1;
+                    } else {
+                        $beasiswa[0]->status = 0;
+                    }
+                }
+
                 $count = 1;
             } else {
                 $query = Beasiswa::where('nama', 'like', '%' . $search_text . '%');
@@ -60,17 +60,17 @@ class AHPController extends Controller
 
                 $count = $query->count();
                 $beasiswa = $query->skip(($page - 1) * $length)->take($length)->get();
-				
-				if($mahasiswa = $user->mahasiswa){
-					foreach($beasiswa as $value){
-						$hasBeasiswa = PendaftarBeasiswa::where('mahasiswa_id', $mahasiswa->id)->where('beasiswa_id', $value->id)->get();		
-						if (count($hasBeasiswa) > 0){
-							$value->status = 1;
-						} else {
-							$value->status = 0;
-						}
-					}
-				}
+
+                if ($mahasiswa = $user->mahasiswa) {
+                    foreach ($beasiswa as $value) {
+                        $hasBeasiswa = PendaftarBeasiswa::where('mahasiswa_id', $mahasiswa->id)->where('beasiswa_id', $value->id)->get();
+                        if (count($hasBeasiswa) > 0) {
+                            $value->status = 1;
+                        } else {
+                            $value->status = 0;
+                        }
+                    }
+                }
             }
             return $this->apiResponseGet(200, $count, $beasiswa);
         } catch (\Exception $e) {
@@ -82,16 +82,19 @@ class AHPController extends Controller
     {
         $this->validate($request, [
             'pembobotan' => 'required',
+            'total' => 'required',
         ]);
 
         try {
             $pembobotan = $request->pembobotan;
-            $cr = $this->getCRforAHP($pembobotan);
-            if ($cr >= 0.1){
+            $total = $request->total;
+
+            $cr = $this->getCRforAHP($pembobotan, $total);
+            if ($cr >= 0.1) {
                 return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
             }
 
-            return $this->apiResponse(200, 'Perbandingan sudah konsisten', $beasiswa);
+            return $this->apiResponse(200, 'Perbandingan sudah konsisten', "CR Memenuhi Saran");
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }

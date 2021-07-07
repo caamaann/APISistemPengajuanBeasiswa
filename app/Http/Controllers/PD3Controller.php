@@ -77,12 +77,12 @@ class PD3Controller extends Controller
         try {
             $pembobotan = $request->pembobotan;
             $cr = $this->getCRforAHP($pembobotan);
-            if ($cr >= 0.1){
+            if ($cr >= 0.1) {
                 return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
             }
 
             $beasiswa = Beasiswa::create($request->all());
-            foreach ($pembobotan as $item){
+            foreach ($pembobotan as $item) {
                 $perbandingan_kriteria = new PerbandinganKriteria;
                 $perbandingan_kriteria->beasiswa_id = $beasiswa->id;
                 $perbandingan_kriteria->kriteria_1 = $item['kriteria_1'];
@@ -115,16 +115,16 @@ class PD3Controller extends Controller
             $beasiswa = Beasiswa::findOrFail($request->id);
             $pembobotan = $request->pembobotan;
             $cr = $this->getCRforAHP($pembobotan);
-            if ($cr >= 0.1){
+            if ($cr >= 0.1) {
                 return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
             }
 
             $beasiswa->update($request->all());
-            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)){
+            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)) {
                 $bobot->delete();
             }
 
-            foreach ($pembobotan as $item){
+            foreach ($pembobotan as $item) {
                 $perbandingan_kriteria = new PerbandinganKriteria;
                 $perbandingan_kriteria->beasiswa_id = $beasiswa->id;
                 $perbandingan_kriteria->kriteria_1 = $item['kriteria_1'];
@@ -147,7 +147,7 @@ class PD3Controller extends Controller
         ]);
         try {
             $beasiswa = Beasiswa::findOrFail($request->id);
-            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)){
+            if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)) {
                 $bobot->delete();
             }
             Beasiswa::destroy($request->id);

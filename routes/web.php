@@ -154,14 +154,14 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 			$router->get('/sertifikat', 'WaliKelasController@getSertifikatMahasiswa');
 		});
 	});
-//
-//	$router->group(['prefix' => 'ketua_program_studi'], function () use ($router) {
-//		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
-//			$router->get('/pendaftar/program_studi', 'KetuaProgramStudiController@getPendaftarProgramStudi');
-//			$router->post('/seleksi/program_studi', 'KetuaProgramStudiController@seleksiBeasiswaProgramStudi');
-//		});
-//	});
-//
+
+	$router->group(['prefix' => 'ketua_program_studi'], function () use ($router) {
+		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
+			$router->get('/', 'KetuaProgramStudiController@getPendaftarProgramStudi');
+			$router->put('/', 'KetuaProgramStudiController@seleksiBeasiswaProgramStudi');
+		});
+	});
+
 //	$router->group(['prefix' => 'ketua_jurusan'], function () use ($router) {
 //		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
 //			$router->get('/pendaftar/jurusan', 'KetuaJurusanController@getPendaftarJurusan');
@@ -210,7 +210,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->put('/', 'JurusanController@updateJurusan');
         $router->delete('/', 'JurusanController@destroyJurusan');
 	});
-	
+
 	$router->group(['prefix' => 'ahp'], function () use ($router) {
         $router->get('/', 'AHPController@get');
         $router->post('/', 'AHPController@countCR');
