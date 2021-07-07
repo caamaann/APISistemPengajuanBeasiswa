@@ -149,9 +149,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 //
 	$router->group(['prefix' => 'wali_kelas'], function () use ($router) {
 		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
-			$router->get('/pendaftar/kelas', 'WaliKelasController@getPendaftarKelas');
-			$router->get('/pendaftar/kelas/sertifikat', 'WaliKelasController@getSertifikatMahasiswa');
-			$router->put('/pendaftar/kelas/penilaian', 'WaliKelasController@updateNilaiKelayakan');
+			$router->get('/', 'WaliKelasController@getPendaftarKelas');
+			$router->put('/', 'WaliKelasController@updateNilaiKelayakan');
+			$router->get('/sertifikat', 'WaliKelasController@getSertifikatMahasiswa');
 		});
 	});
 //
@@ -210,4 +210,10 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->put('/', 'JurusanController@updateJurusan');
         $router->delete('/', 'JurusanController@destroyJurusan');
 	});
+	
+	$router->group(['prefix' => 'ahp'], function () use ($router) {
+        $router->get('/', 'AHPController@get');
+        $router->post('/', 'AHPController@countCR');
+	});
+
 });

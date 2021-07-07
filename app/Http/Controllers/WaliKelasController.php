@@ -36,7 +36,7 @@ class WaliKelasController extends Controller
                     array_push($pendaftarKelas, $value);
                 }
             }
-            return $this->apiResponseGet(200, count($pendaftarKelas), $pendaftarKelas]);
+            return $this->apiResponseGet(200, count($pendaftarKelas), $pendaftarKelas);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
