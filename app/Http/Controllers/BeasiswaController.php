@@ -79,7 +79,7 @@ class BeasiswaController extends Controller
                             ->where('pendaftar_beasiswa.beasiswa_id', $value->id)
                             ->where('mahasiswa.wali_kelas_id', $wali_kelas->id);
                         $value->total_pendaftar = $query->count();
-                        $sudahDinilai = $query->where('pendaftar_beasiswa.status','!=','Mendaftar')->get();
+                        $sudahDinilai = $query->where('pendaftar_beasiswa.status', '!=', 'Mendaftar')->get();
                         if (count($sudahDinilai) > 0) {
                             $value->status = 1;
                         } else {
@@ -87,7 +87,41 @@ class BeasiswaController extends Controller
                         }
                     }
                 }
-
+                if ($ketua_prodi = $user->ketuaProgramStudi) {
+                    foreach ($beasiswa as $value) {
+                        $query = PendaftarBeasiswa::select('pendaftar_beasiswa.*', 'mahasiswa.wali_kelas_id')
+                            ->leftJoin('mahasiswa', 'pendaftar_beasiswa.mahasiswa_id', '=', 'mahasiswa.id')
+                            ->where('pendaftar_beasiswa.beasiswa_id', $value->id)
+                            ->where('mahasiswa.program_studi_id', $ketua_prodi->programStudi->id);
+                        $value->total_pendaftar = $query->count();
+                        $sudahDinilai = $query->where('pendaftar_beasiswa.status', '!=', 'Mendaftar')
+                            ->where('pendaftar_beasiswa.status', '!=', 'Dinilai oleh wali kelas')->get();
+                        if (count($sudahDinilai) > 0) {
+                            $value->status = 1;
+                        } else {
+                            $value->status = 0;
+                        }
+                    }
+                }
+                if ($ketua_jurusan = $user->ketuaJurusan) {
+                    foreach ($beasiswa as $value) {
+                        $query = PendaftarBeasiswa::select('pendaftar_beasiswa.*', 'mahasiswa.wali_kelas_id')
+                            ->leftJoin('mahasiswa', 'pendaftar_beasiswa.mahasiswa_id', '=', 'mahasiswa.id')
+                            ->leftJoin('program_studi', 'mahasiswa.program_studi_id', '=', 'program_studi.id')
+                            ->where('pendaftar_beasiswa.beasiswa_id', $value->id)
+                            ->where('program_studi.jurusan_id', $ketua_jurusan->jurusan->id);
+                        $value->total_pendaftar = $query->count();
+                        $sudahDinilai = $query->where('pendaftar_beasiswa.status', '!=', 'Mendaftar')
+                            ->where('pendaftar_beasiswa.status', '!=', 'Dinilai oleh wali kelas')
+                            ->where('pendaftar_beasiswa.status', '!=', 'Lulus seleksi program studi')
+                            ->get();
+                        if (count($sudahDinilai) > 0) {
+                            $value->status = 1;
+                        } else {
+                            $value->status = 0;
+                        }
+                    }
+                }
             }
             return $this->apiResponseGet(200, $count, $beasiswa);
         } catch (\Exception $e) {

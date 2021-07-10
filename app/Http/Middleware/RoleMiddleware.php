@@ -28,7 +28,7 @@ class RoleMiddleware
         }
         return response()->json([
             'status' => 201,
-            'message' => 'Unauthorized',
+            'message' => 'Tidak memiliki akses ke API',
         ], 500);
     }
 }

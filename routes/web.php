@@ -11,7 +11,7 @@
 |
 */
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+	return $router->app->version();
 });
 
 $router->get('/tes', 'TesController@index');
@@ -22,88 +22,88 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 	//$router->post('logout', 'AuthController@logout');
 
 	$router->group(['prefix' => 'auth'], function () use ($router) {
-        $router->post('login', 'AuthController@login');
-        $router->put('change_password', 'AuthController@change_password');
+		$router->post('login', 'AuthController@login');
+		$router->put('change_password', 'AuthController@change_password');
 	});
 
-    $router->group(['prefix' => 'user'], function () use ($router) {
-        $router->group(['prefix' => 'mahasiswa'], function () use ($router) {
-            $router->get('/', 'AdminController@getMahasiswa');
-            $router->post('/', 'AdminController@storeMahasiswa');
-            $router->put('/', 'AdminController@updateMahasiswa');
-            $router->delete('/', 'AdminController@destroyMahasiswa');
-        });
-        $router->group(['prefix' => 'wali_kelas'], function () use ($router) {
-            $router->get('/', 'AdminController@getWaliKelas');
-            $router->post('/', 'AdminController@storeWaliKelas');
-            $router->put('/', 'AdminController@updateWaliKelas');
-            $router->delete('/', 'AdminController@destroyWaliKelas');
-        });
-        $router->group(['prefix' => 'ketua_program_studi'], function () use ($router) {
-            $router->get('/', 'AdminController@getKetuaProgramStudi');
-            $router->post('/', 'AdminController@storeKetuaProgramStudi');
-            $router->put('/', 'AdminController@updateKetuaProgramStudi');
-            $router->delete('/', 'AdminController@destroyKetuaProgramStudi');
-        });
-        $router->group(['prefix' => 'ketua_jurusan'], function () use ($router) {
-            $router->get('/', 'AdminController@getKetuaJurusan');
-            $router->post('/', 'AdminController@storeKetuaJurusan');
-            $router->put('/', 'AdminController@updateKetuaJurusan');
-            $router->delete('/', 'AdminController@destroyKetuaJurusan');
-        });
-        $router->group(['prefix' => 'pembantu_direktur_3'], function () use ($router) {
-            $router->get('/', 'AdminController@getPembantuDirektur3');
-            $router->post('/', 'AdminController@storePembantuDirektur3');
-            $router->put('/', 'AdminController@updatePembantuDirektur3');
-            $router->delete('/', 'AdminController@destroyPembantuDirektur3');
-        });
-    });
-//
-//	$router->group(['prefix' => 'admin'], function () use ($router) {
-//		$router->get('user/', 'AdminController@getUser');
-//		$router->get('user/all', 'AdminController@getAllUser');
-//		$router->group(['prefix' => 'mahasiswa'], function () use ($router) {
-//			$router->post('/store', 'AdminController@storeMahasiswa');
-//			$router->put('/update', 'AdminController@updateMahasiswa');
-//			$router->post('/destroy', 'AdminController@destroyMahasiswa');
-//			$router->get('/all', 'AdminController@getAllMahasiswa');
-//			$router->get('/', 'AdminController@getMahasiswa');
-//		});
-//		$router->group(['prefix' => 'wali_kelas'], function () use ($router) {
-//			$router->post('/store', 'AdminController@storeWaliKelas');
-//			$router->put('/update', 'AdminController@updateWaliKelas');
-//			$router->post('/destroy', 'AdminController@destroyWaliKelas');
-//			$router->get('/all', 'AdminController@getAllWaliKelas');
-//			$router->get('/', 'AdminController@getWaliKelas');
-//		});
-//		$router->group(['prefix' => 'ketua_program_studi'], function () use ($router) {
-//			$router->post('/store', 'AdminController@storeKetuaProgramStudi');
-//			$router->put('/update', 'AdminController@updateKetuaProgramStudi');
-//			$router->post('/destroy', 'AdminController@destroyKetuaProgramStudi');
-//			$router->get('/all', 'AdminController@getAllKetuaProgramStudi');
-//			$router->get('/', 'AdminController@getKetuaProgramStudi');
-//		});
-//		$router->group(['prefix' => 'ketua_jurusan'], function () use ($router) {
-//			$router->post('/store', 'AdminController@storeKetuaJurusan');
-//			$router->put('/update', 'AdminController@updateKetuaJurusan');
-//			$router->post('/destroy', 'AdminController@destroyKetuaJurusan');
-//			$router->get('/all', 'AdminController@getAllKetuaJurusan');
-//			$router->get('/', 'AdminController@getKetuaJurusan');
-//		});
-//		$router->group(['prefix' => 'pembantu_direktur_3'], function () use ($router) {
-//			$router->post('/store', 'AdminController@storePembantuDirektur3');
-//			$router->put('/update', 'AdminController@updatePembantuDirektur3');
-//			$router->post('/destroy', 'AdminController@destroyPembantuDirektur3');
-//			$router->get('/all', 'AdminController@getAllPembantuDirektur3');
-//			$router->get('/', 'AdminController@getPembantuDirektur3');
-//		});
-//	});
-//
-//	$router->group(['prefix' => 'user'], function () use ($router) {
-//		$router->put('/update', 'UserController@update');
-//		$router->get('/profile', 'UserController@profile');
-//	});
-//
+	$router->group(['prefix' => 'user'], function () use ($router) {
+		$router->group(['prefix' => 'mahasiswa'], function () use ($router) {
+			$router->get('/', 'AdminController@getMahasiswa');
+			$router->post('/', 'AdminController@storeMahasiswa');
+			$router->put('/', 'AdminController@updateMahasiswa');
+			$router->delete('/', 'AdminController@destroyMahasiswa');
+		});
+		$router->group(['prefix' => 'wali_kelas'], function () use ($router) {
+			$router->get('/', 'AdminController@getWaliKelas');
+			$router->post('/', 'AdminController@storeWaliKelas');
+			$router->put('/', 'AdminController@updateWaliKelas');
+			$router->delete('/', 'AdminController@destroyWaliKelas');
+		});
+		$router->group(['prefix' => 'ketua_program_studi'], function () use ($router) {
+			$router->get('/', 'AdminController@getKetuaProgramStudi');
+			$router->post('/', 'AdminController@storeKetuaProgramStudi');
+			$router->put('/', 'AdminController@updateKetuaProgramStudi');
+			$router->delete('/', 'AdminController@destroyKetuaProgramStudi');
+		});
+		$router->group(['prefix' => 'ketua_jurusan'], function () use ($router) {
+			$router->get('/', 'AdminController@getKetuaJurusan');
+			$router->post('/', 'AdminController@storeKetuaJurusan');
+			$router->put('/', 'AdminController@updateKetuaJurusan');
+			$router->delete('/', 'AdminController@destroyKetuaJurusan');
+		});
+		$router->group(['prefix' => 'pembantu_direktur_3'], function () use ($router) {
+			$router->get('/', 'AdminController@getPembantuDirektur3');
+			$router->post('/', 'AdminController@storePembantuDirektur3');
+			$router->put('/', 'AdminController@updatePembantuDirektur3');
+			$router->delete('/', 'AdminController@destroyPembantuDirektur3');
+		});
+	});
+	//
+	//	$router->group(['prefix' => 'admin'], function () use ($router) {
+	//		$router->get('user/', 'AdminController@getUser');
+	//		$router->get('user/all', 'AdminController@getAllUser');
+	//		$router->group(['prefix' => 'mahasiswa'], function () use ($router) {
+	//			$router->post('/store', 'AdminController@storeMahasiswa');
+	//			$router->put('/update', 'AdminController@updateMahasiswa');
+	//			$router->post('/destroy', 'AdminController@destroyMahasiswa');
+	//			$router->get('/all', 'AdminController@getAllMahasiswa');
+	//			$router->get('/', 'AdminController@getMahasiswa');
+	//		});
+	//		$router->group(['prefix' => 'wali_kelas'], function () use ($router) {
+	//			$router->post('/store', 'AdminController@storeWaliKelas');
+	//			$router->put('/update', 'AdminController@updateWaliKelas');
+	//			$router->post('/destroy', 'AdminController@destroyWaliKelas');
+	//			$router->get('/all', 'AdminController@getAllWaliKelas');
+	//			$router->get('/', 'AdminController@getWaliKelas');
+	//		});
+	//		$router->group(['prefix' => 'ketua_program_studi'], function () use ($router) {
+	//			$router->post('/store', 'AdminController@storeKetuaProgramStudi');
+	//			$router->put('/update', 'AdminController@updateKetuaProgramStudi');
+	//			$router->post('/destroy', 'AdminController@destroyKetuaProgramStudi');
+	//			$router->get('/all', 'AdminController@getAllKetuaProgramStudi');
+	//			$router->get('/', 'AdminController@getKetuaProgramStudi');
+	//		});
+	//		$router->group(['prefix' => 'ketua_jurusan'], function () use ($router) {
+	//			$router->post('/store', 'AdminController@storeKetuaJurusan');
+	//			$router->put('/update', 'AdminController@updateKetuaJurusan');
+	//			$router->post('/destroy', 'AdminController@destroyKetuaJurusan');
+	//			$router->get('/all', 'AdminController@getAllKetuaJurusan');
+	//			$router->get('/', 'AdminController@getKetuaJurusan');
+	//		});
+	//		$router->group(['prefix' => 'pembantu_direktur_3'], function () use ($router) {
+	//			$router->post('/store', 'AdminController@storePembantuDirektur3');
+	//			$router->put('/update', 'AdminController@updatePembantuDirektur3');
+	//			$router->post('/destroy', 'AdminController@destroyPembantuDirektur3');
+	//			$router->get('/all', 'AdminController@getAllPembantuDirektur3');
+	//			$router->get('/', 'AdminController@getPembantuDirektur3');
+	//		});
+	//	});
+	//
+	//	$router->group(['prefix' => 'user'], function () use ($router) {
+	//		$router->put('/update', 'UserController@update');
+	//		$router->get('/profile', 'UserController@profile');
+	//	});
+	//
 	$router->group(['prefix' => 'mahasiswa'], function () use ($router) {
 		$router->put('/', 'MahasiswaController@update');
 		$router->post('/', 'MahasiswaController@applyBeasiswa');
@@ -126,7 +126,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 				$router->put('/', 'MahasiswaController@updateSertifikatOrganisasiMahasiswa');
 				$router->delete('/', 'MahasiswaController@destroySertifikatOrganisasiMahasiswa');
 			});
-
 		});
 
 		$router->group(['prefix' => 'orangtua'], function () use ($router) {
@@ -142,78 +141,79 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 			//$router->get('/all', 'MahasiswaController@getAllSaudara');
 			$router->get('/', 'MahasiswaController@getSaudara');
 		});
-
-
 	});
-//
-//
+
+
 	$router->group(['prefix' => 'wali_kelas'], function () use ($router) {
 		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
 			$router->get('/', 'WaliKelasController@getPendaftarKelas');
 			$router->put('/', 'WaliKelasController@updateNilaiKelayakan');
 			$router->get('/sertifikat', 'WaliKelasController@getSertifikatMahasiswa');
 		});
+		$router->group(['prefix' => 'mahasiswa'], function () use ($router) {
+			$router->get('/', 'WaliKelasController@getMahasiswa');
+		});
 	});
 
 	$router->group(['prefix' => 'ketua_program_studi'], function () use ($router) {
 		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
+			$router->get('/kuota', 'KetuaProgramStudiController@getKuotaBeasiswa');
 			$router->get('/', 'KetuaProgramStudiController@getPendaftarProgramStudi');
 			$router->put('/', 'KetuaProgramStudiController@seleksiBeasiswaProgramStudi');
 		});
 	});
 
-//	$router->group(['prefix' => 'ketua_jurusan'], function () use ($router) {
-//		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
-//			$router->get('/pendaftar/jurusan', 'KetuaJurusanController@getPendaftarJurusan');
-//			$router->post('/seleksi/jurusan', 'KetuaJurusanController@seleksiBeasiswaJurusan');
-//		});
-//	});
-//
-//	$router->group(['prefix' => 'pembantu_direktur_3'], function () use ($router) {
-//		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
-//			$router->get('/pendaftar', 'PD3Controller@getPendaftar');
-//			$router->post('/seleksi', 'PD3Controller@seleksiBeasiswa');
-//			$router->post('/penyelesaian', 'PD3Controller@penyelesaianBeasiswa');
-//
-//
-//			$router->post('/store', 'PD3Controller@storeBeasiswa');
-//			$router->put('/update', 'PD3Controller@updateBeasiswa');
-//			$router->post('/destroy', 'PD3Controller@destroyBeasiswa');
-//
-//			$router->group(['prefix' => 'kuota'], function () use ($router) {
-//				$router->post('/store', 'PD3Controller@storeKuotaBeasiswa');
-//				$router->put('/update', 'PD3Controller@updateKuotaBeasiswa');
-//				$router->post('/destroy', 'PD3Controller@destroyKuotaBeasiswa');
-//				$router->get('/program_studi/angkatan', 'PD3Controller@getKuotaBeasiswaProgamStudiAngkatan');
-//				$router->get('/', 'PD3Controller@getKuotaBeasiswa');
-//			});
-//		});
-//	});
-//
+		$router->group(['prefix' => 'ketua_jurusan'], function () use ($router) {
+			$router->group(['prefix' => 'beasiswa'], function () use ($router) {
+				$router->get('/', 'KetuaJurusanController@getPendaftarJurusan');
+				$router->put('/', 'KetuaJurusanController@seleksiBeasiswaJurusan');
+			});
+		});
+	
+	$router->group(['prefix' => 'pembantu_direktur_3'], function () use ($router) {
+		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
+			$router->get('/', 'PD3Controller@getBeasiswa');
+			$router->post('/', 'PD3Controller@storeBeasiswa');
+			$router->put('/', 'PD3Controller@updateBeasiswa');
+			$router->delete('/', 'PD3Controller@destroyBeasiswa');
+
+			$router->get('/pendaftar', 'PD3Controller@getPendaftar');
+			$router->post('/seleksi', 'PD3Controller@seleksiBeasiswa');
+			$router->post('/penyelesaian', 'PD3Controller@penyelesaianBeasiswa');
+
+			$router->group(['prefix' => 'kuota'], function () use ($router) {
+				$router->get('/angkatan', 'PD3Controller@getKuotaBeasiswaProgamStudiAngkatan');
+				$router->get('/', 'PD3Controller@getKuotaBeasiswa');
+				$router->post('/', 'PD3Controller@storeKuotaBeasiswa');
+				$router->put('/', 'PD3Controller@updateKuotaBeasiswa');
+				$router->delete('/', 'PD3Controller@destroyKuotaBeasiswa');
+			});
+		});
+	});
+
 	$router->group(['prefix' => 'beasiswa'], function () use ($router) {
-        $router->get('/', 'BeasiswaController@getBeasiswa');
-        $router->post('/', 'BeasiswaController@storeBeasiswa');
-        $router->put('/', 'BeasiswaController@updateBeasiswa');
-        $router->delete('/', 'BeasiswaController@destroyBeasiswa');
+		$router->get('/', 'BeasiswaController@getBeasiswa');
+		$router->post('/', 'BeasiswaController@storeBeasiswa');
+		$router->put('/', 'BeasiswaController@updateBeasiswa');
+		$router->delete('/', 'BeasiswaController@destroyBeasiswa');
 	});
 
 	$router->group(['prefix' => 'program_studi'], function () use ($router) {
 		$router->get('/', 'ProgramStudiController@get');
-        $router->post('/', 'ProgramStudiController@storeProgramStudi');
-        $router->put('/', 'ProgramStudiController@updateProgramStudi');
-        $router->delete('/', 'ProgramStudiController@destroyProgramStudi');
+		$router->post('/', 'ProgramStudiController@storeProgramStudi');
+		$router->put('/', 'ProgramStudiController@updateProgramStudi');
+		$router->delete('/', 'ProgramStudiController@destroyProgramStudi');
 	});
 
 	$router->group(['prefix' => 'jurusan'], function () use ($router) {
-        $router->get('/', 'JurusanController@get');
-        $router->post('/', 'JurusanController@storeJurusan');
-        $router->put('/', 'JurusanController@updateJurusan');
-        $router->delete('/', 'JurusanController@destroyJurusan');
+		$router->get('/', 'JurusanController@get');
+		$router->post('/', 'JurusanController@storeJurusan');
+		$router->put('/', 'JurusanController@updateJurusan');
+		$router->delete('/', 'JurusanController@destroyJurusan');
 	});
 
 	$router->group(['prefix' => 'ahp'], function () use ($router) {
-        $router->get('/', 'AHPController@get');
-        $router->post('/', 'AHPController@countCR');
+		$router->get('/', 'AHPController@get');
+		$router->post('/', 'AHPController@countCR');
 	});
-
 });

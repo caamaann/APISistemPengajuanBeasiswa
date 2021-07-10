@@ -45,6 +45,44 @@ class WaliKelasController extends Controller
         }
     }
 
+    public function getMahasiswa(Request $request)
+    {
+        if (!$request->length) {
+            $length = 10;
+        } else {
+            $length = $request->length;
+        }
+        if (!$request->page) {
+            $page = 1;
+        } else {
+            $page = $request->page;
+        }
+        if (!$request->search_text) {
+            $search_text = "";
+        } else {
+            $search_text = $request->search_text;
+        }
+
+        try {
+            $user = Auth::User();
+            $waliKelasId = $user->waliKelas->id;
+
+            if ($request->id) {
+                $mahasiswa = Mahasiswa::where('id', $request->id)->where('wali_kelas_id', $waliKelasId)->with('user', 'programStudi')->get();
+                $count = 1;
+            } else {
+                $query = Mahasiswa::where('nama', 'like', '%' . $search_text . '%')->where('wali_kelas_id', $waliKelasId);
+                $count = $query->count();
+                $mahasiswa = $query->skip(($page - 1) * $length)->take($length)->with('user', 'orangTuaMahasiswa', 'saudaraMahasiswa', 'sertifikatPrestasi', 'sertifikatOrganisasi')->get();
+
+            }
+
+            return $this->apiResponseGet(200, $count, $mahasiswa);
+        } catch (\Exception $e) {
+            return $this->apiResponse(500, $e->getMessage(), null);
+        }
+    }
+
     public function updateNilaiKelayakan(Request $request)
     {
         $this->validate($request, [
@@ -76,7 +114,7 @@ class WaliKelasController extends Controller
                 }
                 $mahasiswa = Mahasiswa::where('id', $value)->firstOrFail();
                 $pendaftaranMahasiswa = $mahasiswa->beasiswa()->wherePivot('beasiswa_id', $request->beasiswa_id)->where('status', 'Mendaftar')->first();
-                if (!$pendaftaranMahasiswa){
+                if (!$pendaftaranMahasiswa) {
                     return $this->apiResponse(200, 'Penilaian sudah dilakukan', null);
                 }
                 $pendaftaranMahasiswa->pivot->skor_akhir = $skor_akhir;

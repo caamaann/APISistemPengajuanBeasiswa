@@ -79,7 +79,9 @@ class Controller extends BaseController
             return $e->getMessage();
         }
     }
-    public function getEigenValueForAHP($pembobotan, $total){
+
+    public function getEigenValueForAHP($pembobotan, $total)
+    {
         try {
             $length_pembobotan = $total;
             if ($length_pembobotan < 3) {
@@ -286,7 +288,8 @@ class Controller extends BaseController
         }
     }
 
-    public function getTotalFromPembobotan($pembobotan){
+    public function getTotalFromPembobotan($pembobotan)
+    {
         try {
             switch ($pembobotan) {
                 case 1:

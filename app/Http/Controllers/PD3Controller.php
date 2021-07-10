@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Beasiswa;
 use App\Mahasiswa;
 use App\ProgramStudi;
+use App\KuotaBeasiswa;
 use Illuminate\Http\Request;
 use DB;
 
@@ -36,6 +37,7 @@ class PD3Controller extends Controller
             $search_text = $request->search_text;
         }
 
+        $user = Auth::User();
         try {
             if ($request->id) {
                 $beasiswa = array(Beasiswa::findOrFail($request->id));
@@ -72,11 +74,14 @@ class PD3Controller extends Controller
             'akhir_penerimaan' => 'required|date|after:awal_pendaftaran|after:akhir_pendaftaran|after:awal_penerimaan',
             'penghasilan_orang_tua_maksimal' => 'required',
             'ipk_minimal' => 'required',
+            'pembobotan' => 'required',
+            'total_kriteria' => 'required',
         ]);
 
         try {
             $pembobotan = $request->pembobotan;
-            $cr = $this->getCRforAHP($pembobotan);
+            $total_kriteria = $request->total_kriteria;
+            $cr = $this->getCRforAHP($pembobotan, $total_kriteria);
             if ($cr >= 0.1) {
                 return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
             }
@@ -110,11 +115,14 @@ class PD3Controller extends Controller
             'akhir_penerimaan' => 'date|after:awal_pendaftaran|after:akhir_pendaftaran|after:awal_penerimaan',
             'penghasilan_orang_tua_maksimal' => 'required',
             'ipk_minimal' => 'required',
+            'pembobotan' => 'required',
+            'total_kriteria' => 'required',
         ]);
         try {
             $beasiswa = Beasiswa::findOrFail($request->id);
             $pembobotan = $request->pembobotan;
-            $cr = $this->getCRforAHP($pembobotan);
+            $total_kriteria = $request->total_kriteria;
+            $cr = $this->getCRforAHP($pembobotan, $total_kriteria);
             if ($cr >= 0.1) {
                 return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
             }
@@ -160,17 +168,44 @@ class PD3Controller extends Controller
     public function getKuotaBeasiswa(Request $request)
     {
         $this->validate($request, [
-            'beasiswa_id' => 'required|integer',
+            'beasiswa_id' => 'required',
         ]);
-        try {
-            $kuotaBeasiswa = Beasiswa::where('id', $request->beasiswa_id)
-                ->with('programStudi')
-                ->firstOrFail();
-            return $this->apiResponse(200, 'success', ['kuota_beasiswa' => $kuotaBeasiswa]);
-        } catch (\Exception $e) {
-            return $this->apiResponse(201, $e->getMessage(), null);
+
+        if (!$request->length) {
+            $length = 10;
+        } else {
+            $length = $request->length;
+        }
+        if (!$request->page) {
+            $page = 1;
+        } else {
+            $page = $request->page;
+        }
+        if (!$request->search_text) {
+            $search_text = "";
+        } else {
+            $search_text = $request->search_text;
         }
 
+        try {
+            if ($request->program_studi_id && $request->angkatan) {
+                $kuota = KuotaBeasiswa::where('beasiswa_id', $request->beasiswa_id)
+                    ->where('program_studi_id', $request->program_studi_id)
+                    ->where('angkatan', $request->angkatan)->get();
+
+                $count = 1;
+            } else {
+                $query = KuotaBeasiswa::select('beasiswa_program_studi.*', 'program_studi.nama')->where('program_studi.nama', 'like', '%' . $search_text . '%')
+                    ->leftJoin('program_studi', 'beasiswa_program_studi.program_studi_id', '=', 'program_studi.id')
+                    ->where('beasiswa_program_studi.beasiswa_id', $request->beasiswa_id);
+
+                $count = $query->count();
+                $kuota = $query->skip(($page - 1) * $length)->take($length)->get();
+            }
+            return $this->apiResponseGet(200, $count, $kuota);
+        } catch (\Exception $e) {
+            return $this->apiResponse(500, $e->getMessage(), null);
+        }
     }
 
     public function getKuotaBeasiswaProgamStudiAngkatan(Request $request)
@@ -190,7 +225,7 @@ class PD3Controller extends Controller
             $programStudi = $kuotaBeasiswa->programStudi[0];
             unset($kuotaBeasiswa->programStudi);
             $kuotaBeasiswa->programStudi = $programStudi;
-            return $this->apiResponse(200, 'success', ['kuota_beasiswa' => $kuotaBeasiswa]);
+            return $this->apiResponse(200, 'success', $kuotaBeasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -199,16 +234,26 @@ class PD3Controller extends Controller
     public function storeKuotaBeasiswa(Request $request)
     {
         $this->validate($request, [
-            'beasiswa_id' => 'required|integer',
-            'program_studi_id' => 'required|integer',
-            'angkatan' => 'required|integer',
-            'kuota' => 'required|integer',
+            'beasiswa_id' => 'required',
+            'program_studi_id' => 'required',
+            'angkatan' => 'required',
+            'kuota' => 'required',
         ]);
         try {
-            $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
-            $programStudi = ProgramStudi::findOrFail($request->program_studi_id);
-            $beasiswa->programStudi()->attach($programStudi->id, ['angkatan' => $request->angkatan, 'kuota' => $request->kuota]);
-            return $this->apiResponse(200, 'success', ['kuota_beasiswa' => $beasiswa->programStudi]);
+            if (!$beasiswa = Beasiswa::find($request->beasiswa_id)) {
+                return $this->apiResponse(201, "Beasiswa tidak ada", null);
+            }
+            if (!$programStudi = ProgramStudi::find($request->program_studi_id)) {
+                return $this->apiResponse(201, "Program Studi tidak ada", null);
+            }
+            if ($cek = KuotaBeasiswa::where('beasiswa_id', $request->beasiswa_id)
+                ->where('program_studi_id', $request->program_studi_id)
+                ->where('angkatan', $request->angkatan)->first()) {
+                return $this->apiResponse(201, "Kuota sudah ada", null);
+            }
+            $kuota_beasiswa = KuotaBeasiswa::create($request->all());
+
+            return $this->apiResponse(200, 'Berhasil menambahkan kuota', $kuota_beasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -223,11 +268,19 @@ class PD3Controller extends Controller
             'kuota' => 'required|integer',
         ]);
         try {
-            $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
-            $programStudi = ProgramStudi::findOrFail($request->program_studi_id);
-            $updatedBeasiswa = $beasiswa->programStudi()->wherePivot('program_studi_id', $programStudi->id)->wherePivot('angkatan', $request->angkatan);
-            $updatedBeasiswa->updateExistingPivot([$programStudi->id, $request->angkatan], ['kuota' => $request->kuota]);
-            return $this->apiResponse(200, 'success', ['kuota_beasiswa' => $updatedBeasiswa]);
+            if (!$beasiswa = Beasiswa::find($request->beasiswa_id)) {
+                return $this->apiResponse(201, "Beasiswa tidak ada", null);
+            }
+            if (!$programStudi = ProgramStudi::find($request->program_studi_id)) {
+                return $this->apiResponse(201, "Program Studi tidak ada", null);
+            }
+            $kuota_beasiswa = KuotaBeasiswa::where('beasiswa_id', $request->beasiswa_id)
+                ->where('program_studi_id', $request->program_studi_id)
+                ->where('angkatan', $request->angkatan);
+
+            $kuota_beasiswa->update($request->all());
+
+            return $this->apiResponse(200, 'Berhasil mengubah kuota', $kuota_beasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -241,10 +294,12 @@ class PD3Controller extends Controller
             'angkatan' => 'required|integer',
         ]);
         try {
-            $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
-            $programStudi = ProgramStudi::findOrFail($request->program_studi_id);
-            $beasiswa->programStudi()->wherePivot('angkatan', $request->angkatan)->wherePivot('program_studi_id', $programStudi->id)->detach();
-            return $this->apiResponse(200, 'success', null);
+            $kuota_beasiswa = KuotaBeasiswa::where('beasiswa_id', $request->beasiswa_id)
+                ->where('program_studi_id', $request->program_studi_id)
+                ->where('angkatan', $request->angkatan);
+
+            $kuota_beasiswa->delete();
+            return $this->apiResponse(200, 'success', $kuota_beasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -275,7 +330,7 @@ class PD3Controller extends Controller
                     ->take($kuotaBeasiswa->kuota)
                     ->get();
             }
-            return $this->apiResponse(200, 'success', ['pendaftar_beasiswa' => $listKuotaBeasiswa]);
+            return $this->apiResponse(200, 'success', $listKuotaBeasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -316,7 +371,7 @@ class PD3Controller extends Controller
             $beasiswa = Beasiswa::findOrFail($request->id);
             $beasiswa->status_pendaftaran = "Ditutup";
             $beasiswa->save();
-            return $this->apiResponse(200, 'success', ['pendaftar_beasiswa' => $listKuotaBeasiswa]);
+            return $this->apiResponse(200, 'success', $listKuotaBeasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -334,7 +389,7 @@ class PD3Controller extends Controller
                 ->where('status', "Menerima beasiswa")
                 ->orderBy('pendaftar_beasiswa.skor_akhir', 'desc')
                 ->get();
-            return $this->apiResponse(200, 'success', ['penerima_beasiswa' => $listPenerimaBeasiswa]);
+            return $this->apiResponse(200, 'success', $listPenerimaBeasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }

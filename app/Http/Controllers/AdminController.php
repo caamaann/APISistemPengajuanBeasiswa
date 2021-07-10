@@ -200,6 +200,14 @@ class AdminController extends Controller
         try {
             $mahasiswa = Mahasiswa::findOrFail($request->id);
             $user = $mahasiswa->user;
+            $orang_tua = $mahasiswa->orangTuaMahasiswa;
+            $saudara = $mahasiswa->saudaraMahasiswa;
+            $prestasi = $mahasiswa->sertifikatPrestasi;
+            $organisasi = $mahasiswa->sertifikatOrganisasi;
+            $orang_tua->delete();
+            $saudara->delete();
+            $prestasi->delete();
+            $organisasi->delete();
             $mahasiswa->delete();
             $user->delete();
             return $this->apiResponse(200, 'Mahasiswa berhasil dihapus', $user);
