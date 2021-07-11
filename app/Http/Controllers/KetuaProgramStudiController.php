@@ -155,6 +155,9 @@ class KetuaProgramStudiController extends Controller
                 if (count($value) > $angkatan_list[$key]){
                     return $this->apiResponse(201, "Mahasiswa angkatan ". $key ." yang dipilih melebihi kuota", null);
                 }
+				if (count($value) > 0 && count($value) < $angkatan_list[$key]){
+                    return $this->apiResponse(201, "Mahasiswa angkatan ". $key ." yang dipilih belum memenuhi kuota", null);
+                }
             }
 
             foreach ($list_mahasiswa as $value){
