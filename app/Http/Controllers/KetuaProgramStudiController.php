@@ -139,31 +139,39 @@ class KetuaProgramStudiController extends Controller
 
         try {
             $kuota = KuotaBeasiswa::select('angkatan','kuota')->where('beasiswa_id', $request->beasiswa_id)->where('program_studi_id', $prodiId)->get();
-            $angkatan_list = array();
+            $kuota_list = array();
             foreach ($kuota as $value){
                 $angkatan = $value->angkatan;
                 $kuota = $value->kuota;
-                $angkatan_list[$angkatan] = $kuota;
+                $kuota_list[$angkatan] = $kuota;
             }
 
             $list_mahasiswa = Mahasiswa::whereIn('id', $request->mahasiswa_ids)->get();
             $group_mahasiswa = $list_mahasiswa->groupBy('angkatan');
             $group_mahasiswa->toArray();
 
+            $semuaPendaftar = PendaftarBeasiswa::leftJoin('mahasiswa', 'pendaftar_beasiswa.mahasiswa_id','=','mahasiswa.id')->where('beasiswa_id', $request->beasiswa_id)->where('program_studi_id', $prodiId)->get();
+            $group_mahasiswa_daftar = $semuaPendaftar->groupBy('angkatan');
+            $group_mahasiswa_daftar->toArray();
+
             // Cek apakah melebihi kuota atau tidak
-            foreach ($group_mahasiswa as $key => $value){
-                if (count($value) > $angkatan_list[$key]){
+            foreach ($group_mahasiswa_daftar as $key => $value){
+				if (count($value) > 0 && !isset($group_mahasiswa[$key])){
+                    return $this->apiResponse(201, "Mahasiswa angkatan ". $key ." belum dipilih", null);
+                }
+                if (count($group_mahasiswa[$key]) > $kuota_list[$key]){
                     return $this->apiResponse(201, "Mahasiswa angkatan ". $key ." yang dipilih melebihi kuota", null);
                 }
-				if (count($value) > 0 && count($value) < $angkatan_list[$key]){
+				if (count($value) >= $kuota_list[$key] && count($group_mahasiswa[$key]) < $kuota_list[$key]){
                     return $this->apiResponse(201, "Mahasiswa angkatan ". $key ." yang dipilih belum memenuhi kuota", null);
                 }
             }
 
+
             foreach ($list_mahasiswa as $value){
-                PendaftarBeasiswa::where('beasiswa_id', $request->beasiswa_id)
+               PendaftarBeasiswa::where('beasiswa_id', $request->beasiswa_id)
                     ->where('mahasiswa_id', $value->id)
-                    ->update(['status' => 'Lulus seleksi program studi']);
+                   ->update(['status' => 'Lulus seleksi program studi']);
             }
 
             return $this->apiResponse(200, "Berhasil melakukan seleksi", $list_mahasiswa);
