@@ -136,7 +136,7 @@ class KetuaJurusanController extends Controller
                 ->leftJoin('mahasiswa', 'pendaftar_beasiswa.mahasiswa_id', '=', 'mahasiswa.id')
                 ->leftJoin('wali_kelas', 'mahasiswa.wali_kelas_id', '=', 'wali_kelas.id')
                 ->leftJoin('program_studi', 'mahasiswa.program_studi_id', '=', 'program_studi.id')
-                ->where('pendaftar_beasiswa_id', $request->beasiswa_id)
+                ->where('pendaftar_beasiswa.beasiswa_id', $request->beasiswa_id)
                 ->where('program_studi.jurusan_id', $jurusanId)
                 ->whereIn('pendaftar_beasiswa.status', $listStatus)
                 ->orderBy('program_studi_id', 'asc')->orderBy('angkatan', 'asc')->orderBy('skor_akhir', 'desc')->get();
