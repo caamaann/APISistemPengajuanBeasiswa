@@ -154,9 +154,27 @@ class KetuaProgramStudiController extends Controller
             $semuaPendaftar = PendaftarBeasiswa::leftJoin('mahasiswa', 'pendaftar_beasiswa.mahasiswa_id','=','mahasiswa.id')->where('beasiswa_id', $request->beasiswa_id)->where('program_studi_id', $prodiId)->get();
             $group_mahasiswa_daftar = $semuaPendaftar->groupBy('angkatan');
             $group_mahasiswa_daftar->toArray();
-
+			
+			$belumDinilai = PendaftarBeasiswa::select('pendaftar_beasiswa.*', 'mahasiswa.*', 'wali_kelas.nama as wali_kelas_nama')
+				->leftJoin('mahasiswa', 'pendaftar_beasiswa.mahasiswa_id','=','mahasiswa.id')
+				->leftJoin('wali_kelas', 'mahasiswa.wali_kelas_id','=','wali_kelas.id')
+				->where('beasiswa_id', $request->beasiswa_id)->where('program_studi_id', $prodiId)
+				->where('pendaftar_beasiswa.status', 'Mendaftar')->get();
+			
+			if (count($belumDinilai) > 0){
+				$arrBelumDinilai = array();
+				foreach($belumDinilai as $value){
+					array_push($arrBelumDinilai, $value->wali_kelas_nama);
+				}
+				$wali_kelas_list = join(", ",$arrBelumDinilai);
+				return $this->apiResponse(201, "Wali Kelas ". $wali_kelas_list ." belum melakukan penilaian", null);
+			}
+			
             // Cek apakah melebihi kuota atau tidak
             foreach ($group_mahasiswa_daftar as $key => $value){
+				if (count($value) > 0 && !isset($group_mahasiswa[$key])){
+                    return $this->apiResponse(201, "Mahasiswa angkatan ". $key ." belum dipilih", null);
+                }
 				if (count($value) > 0 && !isset($group_mahasiswa[$key])){
                     return $this->apiResponse(201, "Mahasiswa angkatan ". $key ." belum dipilih", null);
                 }
