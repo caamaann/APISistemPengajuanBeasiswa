@@ -45,21 +45,33 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        //        if ($exception instanceof ValidationException) {
-        //            return response()->json([
-        //                'message' => $exception->getMessage(),
-        //            ], 500);
-        //        }
-        //
-        //        if ($exception instanceof GeneralException) {
-        //            return response()->json(['message' => $exception->getMessage()], 500);
-        //        }
+        if ($exception instanceof ValidationException) {
+            $arrError = array();
+            foreach ($exception->errors() as $value){
+                array_push($arrError, $value[0]);
+            }
+
+            $message = 'Data tidak valid';
+            if (count($arrError) > 0){
+                 $message = $arrError[0];
+            }
+
+            return response()->json([
+//                'message' => $exception->getMessage(),
+                'message' => $message,
+            ], 500);
+        }
+
+//        if ($exception instanceof GeneralException) {
+//            return response()->json([
+//                'message' => $exception->handleAjax()
+//            ], 500);
+//        }
         // if ($exception) {
         //     return response()->json([
         //         'message' => $exception->getMessage(),
         //     ], 500);
         // }
-
 
         return parent::render($request, $exception);
     }

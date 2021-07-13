@@ -51,7 +51,7 @@ class GeneralException extends Exception
     /**
      * Handle an ajax response.
      */
-    private function handleAjax()
+    public function handleAjax()
     {
         return response()->json([
             'error' => true,

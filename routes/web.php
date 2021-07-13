@@ -178,7 +178,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 			$router->delete('/', 'PD3Controller@destroyBeasiswa');
 
 			$router->get('/pendaftar', 'PD3Controller@getPendaftar');
-			$router->post('/seleksi', 'PD3Controller@seleksiBeasiswa');
+			$router->put('/seleksi', 'PD3Controller@seleksiBeasiswa');
 			$router->post('/penyelesaian', 'PD3Controller@penyelesaianBeasiswa');
 
 			$router->group(['prefix' => 'kuota'], function () use ($router) {

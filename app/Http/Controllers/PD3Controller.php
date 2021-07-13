@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\PendaftarBeasiswa;
 use Illuminate\Support\Facades\Auth;
 use App\Beasiswa;
 use App\Mahasiswa;
@@ -311,26 +312,23 @@ class PD3Controller extends Controller
             'beasiswa_id' => 'required|integer',
         ]);
         try {
-            $listKuotaBeasiswa = DB::table('beasiswa_program_studi')
-                ->where('beasiswa_id', $request->beasiswa_id)
-                ->distinct()
-                ->get(['angkatan', 'program_studi_id', 'kuota']);
-
-            foreach ($listKuotaBeasiswa as $kuotaBeasiswa) {
-                $kuotaBeasiswa->pendaftarBeasiswa = Mahasiswa::where('program_studi_id', $kuotaBeasiswa->program_studi_id)
-                    ->where('angkatan', $kuotaBeasiswa->angkatan)
-                    ->join('pendaftar_beasiswa', 'id', 'pendaftar_beasiswa.mahasiswa_id')
-                    ->where('pendaftar_beasiswa.beasiswa_id', $request->beasiswa_id)
-                    ->where('status', "Lulus seleksi jurusan")
-                    ->whereNotIn('mahasiswa_id', function ($q) {
-                        $q->select('mahasiswa_id')
-                            ->from('pendaftar_beasiswa')
-                            ->where('status', 'Menerima beasiswa');
-                    })->orderBy('pendaftar_beasiswa.skor_akhir', 'desc')
-                    ->take($kuotaBeasiswa->kuota)
-                    ->get();
+            if (!$request->search_text) {
+                $search_text = "";
+            } else {
+                $search_text = $request->search_text;
             }
-            return $this->apiResponse(200, 'success', $listKuotaBeasiswa);
+            $listStatus = ['Lulus seleksi jurusan', 'Menerima beasiswa'];
+            $pendaftarBeasiswa = PendaftarBeasiswa::select('pendaftar_beasiswa.*', 'mahasiswa.*', 'wali_kelas.nama as wali_kelas_nama', 'program_studi.nama as program_studi_nama')
+                ->leftJoin('mahasiswa', 'pendaftar_beasiswa.mahasiswa_id', '=', 'mahasiswa.id')
+                ->leftJoin('wali_kelas', 'mahasiswa.wali_kelas_id', '=', 'wali_kelas.id')
+                ->leftJoin('program_studi', 'mahasiswa.program_studi_id', '=', 'program_studi.id')
+                ->where('pendaftar_beasiswa.beasiswa_id', $request->beasiswa_id)
+                ->where('mahasiswa.nama', 'like', '%' . $search_text . '%')
+                ->whereIn('pendaftar_beasiswa.status', $listStatus)
+                ->orderBy('program_studi_id', 'asc')->orderBy('angkatan', 'asc')->orderBy('skor_akhir', 'desc')->get();
+
+            return $this->apiResponseGet(200, count($pendaftarBeasiswa), $pendaftarBeasiswa);
+
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
@@ -340,38 +338,24 @@ class PD3Controller extends Controller
     {
         $this->validate($request, [
             'beasiswa_id' => 'required|integer',
+            'mahasiswa_ids' => 'required'
         ]);
         try {
-            $listKuotaBeasiswa = DB::table('beasiswa_program_studi')
-                ->where('beasiswa_id', $request->beasiswa_id)
-                ->distinct()
-                ->get(['angkatan', 'program_studi_id', 'kuota']);
-            foreach ($listKuotaBeasiswa as $kuotaBeasiswa) {
-                $kuotaBeasiswa->pendaftarBeasiswa = Mahasiswa::where('program_studi_id', $kuotaBeasiswa->program_studi_id)
-                    ->where('angkatan', $kuotaBeasiswa->angkatan)
-                    ->join('pendaftar_beasiswa', 'id', 'pendaftar_beasiswa.mahasiswa_id')
-                    ->where('pendaftar_beasiswa.beasiswa_id', $request->beasiswa_id)
-                    ->where('status', "Lulus seleksi jurusan")
-                    ->whereNotIn('mahasiswa_id', function ($q) {
-                        $q->select('mahasiswa_id')
-                            ->from('pendaftar_beasiswa')
-                            ->where('status', 'Menerima beasiswa');
-                    })->orderBy('pendaftar_beasiswa.skor_akhir', 'desc')
-                    ->take($kuotaBeasiswa->kuota)
-                    ->get();
+            $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
+            if ($beasiswa->status_pendaftaran == 'Ditutup'){
+                return $this->apiResponse(200, 'Beasiswa sudah dilakukan pemilihan penerima beasiswa', null);
             }
-            foreach ($listKuotaBeasiswa as $key => $kuotaBeasiswa) {
-                foreach ($kuotaBeasiswa->pendaftarBeasiswa as $pendaftarBeasiswa) {
-                    DB::table('pendaftar_beasiswa')
-                        ->where('beasiswa_id', $pendaftarBeasiswa->beasiswa_id)
-                        ->where('mahasiswa_id', $pendaftarBeasiswa->mahasiswa_id)
-                        ->update(['status' => 'Menerima beasiswa']);
-                }
+            $list_mahasiswa = Mahasiswa::whereIn('id', $request->mahasiswa_ids)->get();
+
+            foreach ($list_mahasiswa as $value) {
+                PendaftarBeasiswa::where('beasiswa_id', $request->beasiswa_id)
+                    ->where('mahasiswa_id', $value->id)
+                    ->update(['status' => 'Menerima beasiswa']);
             }
-            $beasiswa = Beasiswa::findOrFail($request->id);
+
             $beasiswa->status_pendaftaran = "Ditutup";
             $beasiswa->save();
-            return $this->apiResponse(200, 'success', $listKuotaBeasiswa);
+            return $this->apiResponse(200, 'Berhasil melakukan seleksi penerima beasiswa', $list_mahasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
