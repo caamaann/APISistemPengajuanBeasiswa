@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Beasiswa;
 use App\ProgramStudi;
+use App\KuotaBeasiswa;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
@@ -127,6 +128,12 @@ class BeasiswaController extends Controller
                             } else {
                                 $value->status = 0;
                             }
+                        }
+                    }
+					if ($pd3 = $user->pembantuDirektur3) {
+                        foreach ($beasiswa as $value) {
+                            $query = KuotaBeasiswa::where('beasiswa_id', $value->id)
+                            $value->total_kuota = $query->sum('kuota');
                         }
                     }
                 }
