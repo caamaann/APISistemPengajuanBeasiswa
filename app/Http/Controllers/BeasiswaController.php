@@ -132,7 +132,7 @@ class BeasiswaController extends Controller
                     }
 					if ($pd3 = $user->pembantuDirektur3) {
                         foreach ($beasiswa as $value) {
-                            $query = KuotaBeasiswa::where('beasiswa_id', $value->id)
+                            $query = KuotaBeasiswa::where('beasiswa_id', $value->id);
                             $value->total_kuota = $query->sum('kuota');
                         }
                     }
