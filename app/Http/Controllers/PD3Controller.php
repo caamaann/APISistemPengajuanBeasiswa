@@ -17,7 +17,6 @@ class PD3Controller extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:pd3');
     }
 
     public function getBeasiswa(Request $request)

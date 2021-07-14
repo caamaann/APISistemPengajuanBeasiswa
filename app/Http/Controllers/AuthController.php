@@ -14,7 +14,6 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-//        $this->middleware('guest', ['except' => ['logout']]);
         $this->middleware('auth', ['except' => ['login']]);
     }
 
@@ -48,7 +47,7 @@ class AuthController extends Controller
 
         $credentials = $request->only(['username', 'password']);
         try {
-            if (!$token = Auth::attempt($credentials)) {
+            if (!$token = Auth::attempt($credentials, true)) {
                 return $this->apiResponse(500, 'Login gagal, periksa password Anda', null);
             }
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {

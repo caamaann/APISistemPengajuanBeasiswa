@@ -16,7 +16,6 @@ class KetuaProgramStudiController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:ketuaProdi');
     }
 
     // public function getPendaftarProgramStudi(Request $request)

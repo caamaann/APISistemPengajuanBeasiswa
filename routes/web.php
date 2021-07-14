@@ -147,7 +147,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 	$router->group(['prefix' => 'wali_kelas'], function () use ($router) {
 		$router->group(['prefix' => 'beasiswa'], function () use ($router) {
 			$router->get('/', 'WaliKelasController@getPendaftarKelas');
+			$router->get('/all', 'WaliKelasController@getAllPendaftarKelas');
 			$router->put('/', 'WaliKelasController@updateNilaiKelayakan');
+			$router->post('/', 'WaliKelasController@updateNilaiKelayakanSatuMahasiswa');
 			$router->get('/sertifikat', 'WaliKelasController@getSertifikatMahasiswa');
 		});
 		$router->group(['prefix' => 'mahasiswa'], function () use ($router) {

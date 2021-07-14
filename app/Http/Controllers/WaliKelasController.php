@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\PerbandinganAlternatif;
 use App\PerbandinganKriteria;
+use App\PendaftarBeasiswa;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Beasiswa;
@@ -16,7 +17,6 @@ class WaliKelasController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:waliKelas');
     }
 
     public function getPendaftarKelas(Request $request)
@@ -45,6 +45,47 @@ class WaliKelasController extends Controller
         }
     }
 
+	 public function getAllPendaftarKelas(Request $request)
+    {
+        $this->validate($request, [
+            'beasiswa_id' => 'required',
+        ]);
+		
+		if (!$request->length) {
+            $length = 10;
+        } else {
+            $length = $request->length;
+        }
+        if (!$request->page) {
+            $page = 1;
+        } else {
+            $page = $request->page;
+        }
+        if (!$request->search_text) {
+            $search_text = "";
+        } else {
+            $search_text = $request->search_text;
+        }
+		
+        try {
+            $user = Auth::User();
+           $waliKelasId = $user->waliKelas;
+			$query = PendaftarBeasiswa::select('pendaftar_beasiswa.*', 'mahasiswa.*', 'orang_tua_mahasiswa.*')
+				->leftJoin('mahasiswa', 'pendaftar_beasiswa.mahasiswa_id', '=', 'mahasiswa.id')
+				->leftJoin('orang_tua_mahasiswa', 'orang_tua_mahasiswa.mahasiswa_id', '=', 'mahasiswa.id')
+				->where('pendaftar_beasiswa.beasiswa_id', $request->beasiswa_id)
+				->where('mahasiswa.wali_kelas_id', $waliKelasId->id)
+				->where('mahasiswa.nama', 'like', '%' . $search_text . '%');
+				
+			$count = $query->count();
+			$pendaftarKelas = $query->skip(($page - 1) * $length)->take($length)->get();
+          
+			return $this->apiResponseGet(200, $count, $pendaftarKelas);
+        } catch (\Exception $e) {
+            return $this->apiResponse(201, $e->getMessage(), null);
+        }
+    }
+	
     public function getMahasiswa(Request $request)
     {
         if (!$request->length) {
@@ -140,6 +181,31 @@ class WaliKelasController extends Controller
         }
     }
 
+	public function updateNilaiKelayakanSatuMahasiswa(Request $request)
+    {
+        $this->validate($request, [
+            'beasiswa_id' => 'required',
+            'mahasiswa_id' => 'required',
+        ]);
+        try {
+            $user = Auth::User();
+            $waliKelasId = $user->waliKelas->id;
+
+			$mahasiswa = Mahasiswa::where('id', $request->mahasiswa_id)->firstOrFail();
+			$pendaftaranMahasiswa = $mahasiswa->beasiswa()->wherePivot('beasiswa_id', $request->beasiswa_id)->where('status', 'Mendaftar')->first();
+			if (!$pendaftaranMahasiswa) {
+				return $this->apiResponse(200, 'Penilaian sudah dilakukan', null);
+			}
+			$pendaftaranMahasiswa->pivot->skor_akhir = 1;
+			$pendaftaranMahasiswa->pivot->status = "Dinilai oleh wali kelas";
+			$pendaftaranMahasiswa->pivot->save();
+
+            return $this->apiResponse(200, 'Berhasil menambahkan penilaian', $pendaftaranMahasiswa);
+        } catch (\Exception $e) {
+            return $this->apiResponse(201, $e->getMessage(), null);
+        }
+    }
+	
     public function getSertifikatMahasiswa(Request $request)
     {
         $this->validate($request, [

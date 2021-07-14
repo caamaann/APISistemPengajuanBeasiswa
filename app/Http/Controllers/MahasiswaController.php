@@ -21,7 +21,6 @@ class MahasiswaController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:mahasiswa');
     }
 
     public function update(Request $request)

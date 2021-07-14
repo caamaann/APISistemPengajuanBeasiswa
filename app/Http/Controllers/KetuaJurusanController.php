@@ -19,7 +19,6 @@ class KetuaJurusanController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:ketuaJurusan');
     }
 
 //    public function getPendaftarJurusan(Request $request)
