@@ -374,11 +374,11 @@ class MahasiswaController extends Controller
             if (!$this->validasiDataSertifikat($mahasiswa)) {
                 return $this->apiResponse(201, 'Sertifikat wajib belum lengkap', null);
             }
-            $beasiswaMahasiswa = $this->getBeasiswaMahasiswa($mahasiswa);
+/*            $beasiswaMahasiswa = $this->getBeasiswaMahasiswa($mahasiswa);
             if ($beasiswaMahasiswa) {
                 return $this->apiResponse(201, 'Sudah Mendaftar Beasiswa', null);
             }
-            $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
+ */           $beasiswa = Beasiswa::findOrFail($request->beasiswa_id);
             if (!$this->validasiWaktuPendaftaranBeasiswa($beasiswa)) {
                 return $this->apiResponse(201, 'Waktu Pendaftaran Beasiswa Tidak Valid', null);
             }
