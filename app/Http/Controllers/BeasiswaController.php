@@ -242,6 +242,9 @@ class BeasiswaController extends Controller
             if ($kuota = KuotaBeasiswa::where('beasiswa_id', $request->id)) {
                 $kuota->delete();
             }
+            if ($pendaftar = PendaftarBeasiswa::where('beasiswa_id', $request->id)) {
+                $pendaftar->delete();
+            }
             Beasiswa::destroy($request->id);
             return $this->apiResponse(200, 'Beasiswa berhasil dihapus', $beasiswa);
         } catch (\Exception $e) {
