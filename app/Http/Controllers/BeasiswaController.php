@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Mahasiswa;
 use App\PerbandinganKriteria;
+use App\PerbandinganAlternatif;
 use App\PendaftarBeasiswa;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use App\Beasiswa;
 use App\ProgramStudi;
 use App\KuotaBeasiswa;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
@@ -238,6 +239,9 @@ class BeasiswaController extends Controller
             $beasiswa = Beasiswa::findOrFail($request->id);
             if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)) {
                 $bobot->delete();
+            }
+			if ($bobot_alter = PerbandinganAlternatif::where('beasiswa_id', $request->id)) {
+                $bobot_alter->delete();
             }
             if ($kuota = KuotaBeasiswa::where('beasiswa_id', $request->id)) {
                 $kuota->delete();
