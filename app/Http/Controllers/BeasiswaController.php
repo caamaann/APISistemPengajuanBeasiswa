@@ -69,7 +69,6 @@ class BeasiswaController extends Controller
                 $beasiswa = $query->skip(($page - 1) * $length)->take($length)->get();
 
                 if ($user) {
-
                     if ($mahasiswa = $user->mahasiswa) {
                         foreach ($beasiswa as $value) {
                             $hasBeasiswa = PendaftarBeasiswa::where('mahasiswa_id', $mahasiswa->id)->where('beasiswa_id', $value->id)->get();
@@ -239,6 +238,9 @@ class BeasiswaController extends Controller
             $beasiswa = Beasiswa::findOrFail($request->id);
             if ($bobot = PerbandinganKriteria::where('beasiswa_id', $request->id)) {
                 $bobot->delete();
+            }
+            if ($kuota = KuotaBeasiswa::where('beasiswa_id', $request->id)) {
+                $kuota->delete();
             }
             Beasiswa::destroy($request->id);
             return $this->apiResponse(200, 'Beasiswa berhasil dihapus', $beasiswa);
