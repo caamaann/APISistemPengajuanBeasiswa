@@ -280,7 +280,7 @@ class MahasiswaController extends Controller
 
     public function validasiWaktuPendaftaranBeasiswa($beasiswa)
     {
-        return (Carbon::now() > $beasiswa->awal_pendaftaran && Carbon::now() < $beasiswa->akhir_pendaftaran);
+        return (Carbon::now() >= $beasiswa->awal_pendaftaran && Carbon::now() <= $beasiswa->akhir_pendaftaran);
     }
 
     public function getBeasiswaMahasiswa($mahasiswa)
