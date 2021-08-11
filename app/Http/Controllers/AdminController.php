@@ -11,6 +11,10 @@ use App\KetuaJurusan;
 use App\PembantuDirektur3;
 use App\ProgramStudi;
 use App\Jurusan;
+use App\OrangTuaMahasiswa;
+use App\SaudaraMahasiswa;
+use App\SertifikatOrganisasi;
+use App\SertifikatPrestasi;
 use Illuminate\Http\Request;
 use Exception;
 
@@ -198,20 +202,16 @@ class AdminController extends Controller
         try {
             $mahasiswa = Mahasiswa::findOrFail($request->id);
             $user = $mahasiswa->user;
-            $orang_tua = $mahasiswa->orangTuaMahasiswa;
-            $saudara = $mahasiswa->saudaraMahasiswa;
-            $prestasi = $mahasiswa->sertifikatPrestasi;
-            $organisasi = $mahasiswa->sertifikatOrganisasi;
-            if ($orang_tua){
+            if ($orang_tua = OrangTuaMahasiswa::where('mahasiswa_id', $request->id)) {
                 $orang_tua->delete();
             }
-            if ($saudara){
+            if ($saudara = SaudaraMahasiswa::where('mahasiswa_id', $request->id)) {
                 $saudara->delete();
             }
-            if ($prestasi){
+            if ($prestasi = SertifikatPrestasi::where('mahasiswa_id', $request->id)) {
                 $prestasi->delete();
             }
-            if ($organisasi){
+            if ($organisasi = SertifikatOrganisasi::where('mahasiswa_id', $request->id)) {
                 $organisasi->delete();
             }
             $mahasiswa->delete();
