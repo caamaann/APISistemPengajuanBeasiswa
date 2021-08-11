@@ -280,7 +280,7 @@ class MahasiswaController extends Controller
 
     public function validasiWaktuPendaftaranBeasiswa($beasiswa)
     {
-        return (Carbon::now()->between(Carbon::create($beasiswa->awal_pendaftaran), Carbon::create($beasiswa->akhir_pendaftaran)));
+        return (Carbon::today()->between(Carbon::create($beasiswa->awal_pendaftaran), Carbon::create($beasiswa->akhir_pendaftaran)));
     }
 
     public function getBeasiswaMahasiswa($mahasiswa)
