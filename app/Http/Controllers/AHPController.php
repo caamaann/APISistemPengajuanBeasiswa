@@ -11,6 +11,7 @@ use App\ProgramStudi;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
+use Exception;
 
 
 class AHPController extends Controller
@@ -78,7 +79,7 @@ class AHPController extends Controller
                 }
             }
             return $this->apiResponseGet(200, $count, $beasiswa);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -100,7 +101,7 @@ class AHPController extends Controller
             }
 
             return $this->apiResponse(200, 'Perbandingan sudah konsisten', "CR Memenuhi Saran");
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
     }

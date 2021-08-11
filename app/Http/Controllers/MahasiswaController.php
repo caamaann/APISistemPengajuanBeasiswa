@@ -410,7 +410,7 @@ class MahasiswaController extends Controller
             //          $tanggunganOrangTua = $penghasilanOrangTua / $jumlahTanggungan;
             //        $skorTanggungan = $this->getSkorTanggunganOrangTua($tanggunganOrangTua);
             //      $skorKemampuanEkonomi = ($skorPenghasilanOrangTua + $skorTanggungan) / 2;
-            $mahasiswa->beasiswa()->attach($beasiswa->id,);
+            $mahasiswa->beasiswa()->attach($beasiswa->id);
             return $this->apiResponse(200, 'Berhasil mendaftar beasiswa', $mahasiswa);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);

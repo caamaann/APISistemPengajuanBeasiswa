@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Role;
 use App\Mahasiswa;
@@ -12,8 +11,8 @@ use App\KetuaJurusan;
 use App\PembantuDirektur3;
 use App\ProgramStudi;
 use App\Jurusan;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
+use Exception;
 
 
 class AdminController extends Controller
@@ -48,7 +47,7 @@ class AdminController extends Controller
             $user->profile = $this->getUserProfile($user);
             $user->roles = $this->getUserRole($user);
             return $this->apiResponse(200, 'success', $user);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -57,7 +56,7 @@ class AdminController extends Controller
     {
         try {
             return $this->apiResponse(200, 'List Mahasiswa', Mahasiswa::with('user', 'waliKelas', 'programStudi')->get());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -108,7 +107,7 @@ class AdminController extends Controller
             }
 
             return $this->apiResponseGet(200, $count, $mahasiswa);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -150,7 +149,7 @@ class AdminController extends Controller
                 'user' => $user
             );
             return $this->apiResponse(200, 'Mahasiswa berhasil ditambahkan', $mahasiswa_data);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -186,7 +185,7 @@ class AdminController extends Controller
             $mahasiswa->program_studi_id = $programStudi->id;
             $mahasiswa->save();
             return $this->apiResponse(200, 'Mahasiswa berhasil diubah', $mahasiswa);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -203,14 +202,22 @@ class AdminController extends Controller
             $saudara = $mahasiswa->saudaraMahasiswa;
             $prestasi = $mahasiswa->sertifikatPrestasi;
             $organisasi = $mahasiswa->sertifikatOrganisasi;
-            $orang_tua->delete();
-            $saudara->delete();
-            $prestasi->delete();
-            $organisasi->delete();
+            if ($orang_tua){
+                $orang_tua->delete();
+            }
+            if ($saudara){
+                $saudara->delete();
+            }
+            if ($prestasi){
+                $prestasi->delete();
+            }
+            if ($organisasi){
+                $organisasi->delete();
+            }
             $mahasiswa->delete();
             $user->delete();
             return $this->apiResponse(200, 'Mahasiswa berhasil dihapus', $user);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -220,7 +227,7 @@ class AdminController extends Controller
     {
         try {
             return $this->apiResponse(200, 'List Wali Kelas', WaliKelas::with('user', 'jurusan')->get());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -257,7 +264,7 @@ class AdminController extends Controller
             }
 
             return $this->apiResponseGet(200, $count, $wali_kelas);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -288,7 +295,7 @@ class AdminController extends Controller
                 'user' => $user
             );
             return $this->apiResponse(200, 'Wali kelas berhasil ditambahkan', $waliKelasData);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -316,7 +323,7 @@ class AdminController extends Controller
                 'user' => $waliKelas->user
             );
             return $this->apiResponse(200, 'Wali kelas berhasil diubah', $waliKelasData);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -332,7 +339,7 @@ class AdminController extends Controller
             $waliKelas->delete();
             $user->delete();
             return $this->apiResponse(200, 'Wali kelas berhasil dihapus', $user);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -341,7 +348,7 @@ class AdminController extends Controller
     {
         try {
             return $this->apiResponse(200, 'List Ketua Program Studi', KetuaProgramStudi::with('user', 'programStudi')->get());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -386,7 +393,7 @@ class AdminController extends Controller
             }
 
             return $this->apiResponseGet(200, $count, $ketua_prodi);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -417,7 +424,7 @@ class AdminController extends Controller
                 'user' => $user
             );
             return $this->apiResponse(200, 'Ketua Program Studi berhasil ditambahkan', $ketuaProgramStudiData);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -446,7 +453,7 @@ class AdminController extends Controller
                 'user' => $user
             );
             return $this->apiResponse(200, 'Ketua Program Studi berhasil diubah', $ketuaProgramStudiData);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -462,7 +469,7 @@ class AdminController extends Controller
             $ketuaProgramStudi->delete();
             $user->delete();
             return $this->apiResponse(200, 'Ketua Program Studi berhasil dihapus', $user);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -471,7 +478,7 @@ class AdminController extends Controller
     {
         try {
             return $this->apiResponse(200, 'List Ketua Jurusan', KetuaJurusan::with('user', 'jurusan')->get());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -508,7 +515,7 @@ class AdminController extends Controller
             }
 
             return $this->apiResponseGet(200, $count, $ketua_jurusan);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -539,7 +546,7 @@ class AdminController extends Controller
                 'user' => $user
             );
             return $this->apiResponse(200, 'Ketua Jurusan berhasil ditambahkan', $ketuaJurusanData);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -568,7 +575,7 @@ class AdminController extends Controller
                 'user' => $user
             );
             return $this->apiResponse(200, 'Ketua Jurusan berhasil diubah', $ketuaJurusanData);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -584,7 +591,7 @@ class AdminController extends Controller
             $ketuaJurusan->delete();
             $user->delete();
             return $this->apiResponse(200, 'Ketua Jurusan berhasil dihapus', $user);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -593,7 +600,7 @@ class AdminController extends Controller
     {
         try {
             return $this->apiResponse(200, 'List Pembantu Direktur III', PembantuDirektur3::with('user')->get());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -628,7 +635,7 @@ class AdminController extends Controller
             }
 
             return $this->apiResponseGet(200, $count, $pd3);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -656,7 +663,7 @@ class AdminController extends Controller
                 'user' => $user
             );
             return $this->apiResponse(200, 'Pembantu Direktur III berhasil ditambahkan', $pd3Data);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -682,7 +689,7 @@ class AdminController extends Controller
                 'user' => $user
             );
             return $this->apiResponse(200, 'Pembantu Direktur III berhasil diubah', $pd3Data);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
@@ -698,7 +705,7 @@ class AdminController extends Controller
             $pd3->delete();
             $user->delete();
             return $this->apiResponse(200, 'Pembantu Direktur III berhasil dihapus', $user);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->apiResponse(500, $e->getMessage(), null);
         }
     }
