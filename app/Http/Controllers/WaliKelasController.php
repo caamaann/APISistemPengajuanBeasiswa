@@ -50,7 +50,7 @@ class WaliKelasController extends Controller
         $this->validate($request, [
             'beasiswa_id' => 'required',
         ]);
-		
+
 		if (!$request->length) {
             $length = 10;
         } else {
@@ -66,7 +66,7 @@ class WaliKelasController extends Controller
         } else {
             $search_text = $request->search_text;
         }
-		
+
         try {
             $user = Auth::User();
            $waliKelasId = $user->waliKelas;
@@ -76,16 +76,16 @@ class WaliKelasController extends Controller
 				->where('pendaftar_beasiswa.beasiswa_id', $request->beasiswa_id)
 				->where('mahasiswa.wali_kelas_id', $waliKelasId->id)
 				->where('mahasiswa.nama', 'like', '%' . $search_text . '%');
-				
+
 			$count = $query->count();
 			$pendaftarKelas = $query->skip(($page - 1) * $length)->take($length)->get();
-          
+
 			return $this->apiResponseGet(200, $count, $pendaftarKelas);
         } catch (\Exception $e) {
             return $this->apiResponse(201, $e->getMessage(), null);
         }
     }
-	
+
     public function getMahasiswa(Request $request)
     {
         if (!$request->length) {
@@ -143,6 +143,11 @@ class WaliKelasController extends Controller
             $eigenKriteria = $this->getEigenValueForAHP($pembobotanKriteria, $totalKriteria);
             $arrEigenAlternatif[] = null;
             $count = 0;
+
+            $cr = $this->getCRforAHP($pembobotanAlternatif[$totalKriteria - 1], $totalAlternatif);
+            if ($cr >= 0.1) {
+                return $this->apiResponse(200, 'Perbandingan tidak konsisten', null);
+            }
             foreach ($pembobotanAlternatif as $index => $value) {
                 $arrEigenAlternatif[$count] = $this->getEigenValueForAHP($value, $totalAlternatif);
                 $count++;
@@ -205,7 +210,7 @@ class WaliKelasController extends Controller
             return $this->apiResponse(201, $e->getMessage(), null);
         }
     }
-	
+
     public function getSertifikatMahasiswa(Request $request)
     {
         $this->validate($request, [
